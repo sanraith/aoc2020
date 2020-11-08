@@ -25,7 +25,8 @@
                         "aot": true,
                         "assets": ["src/web/favicon.ico", "src/web/assets"],
                         "styles": ["src/web/styles.scss"],
-                        "scripts": []
+                        "scripts": [],
+                        "webWorkerTsConfig": "tsconfig.worker.json"
                     },
                     "configurations": {
                         "production": {
