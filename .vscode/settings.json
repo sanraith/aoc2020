@@ -1,0 +1,42 @@
+{
+    "cSpell.ignorePaths": [
+        "**/package-lock.json",
+        "**/package.json",
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/objects/**",
+        ".vscode",
+        "tsconfig*.json",
+        "tslint.json",
+        "angular.json",
+        "**/lib/**"
+    ],
+    "cSpell.words": [
+        "devb",
+        "tixid",
+        "ttsc",
+        "ttypescript",
+        "uuidv"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        // --- Remove some clutter ---
+        "node_modules": true,
+        "e2e/": false, // e2e tests
+        "src/**/*.spec.ts": false, // unit tests
+        "src/**/environments/": false, // build configuration options for target environments
+        "browserslist": false, // target browser selection
+        "karma.conf.js": false, // test runner config
+        "tsconfig.spec.json": false, // test compiler config
+    },
+    "browser-preview.startUrl": "localhost:4200",
+    "browser-preview.verbose": false,
+    "html.format.unformatted": "wbr,%",
+    "emmet.includeLanguages": {
+        "ejs": "html"
+    }
+}
