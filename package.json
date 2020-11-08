@@ -2,7 +2,8 @@
     "name": "aoc2020",
     "version": "0.0.0",
     "scripts": {
-        "con": "SET DEBUG=aoc2020:* && nodemon --config \"./util/console-nodemon.json\"",
+        "dev": "SET DEBUG=aoc2020:* && nodemon --config \"./util/console-nodemon.json\"",
+        "console_single": "SET DEBUG=aoc2020:* && ts-node -C typescript -P ./tsconfig.console.json src/console/start.ts",
         "deploy": "ts-node util/deploy.ts",
         "ng": "ng",
         "start": "ng serve",

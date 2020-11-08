@@ -7,10 +7,12 @@
         "declaration": false,
         "downlevelIteration": true,
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "module": "commonjs",
         "moduleResolution": "node",
         "importHelpers": true,
         "target": "es6",
+        "allowSyntheticDefaultImports": true,
         "lib": [
             "es2015"
         ],
@@ -19,13 +21,11 @@
         "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
     },
     "include": [
-        "src/**/*.ts"
+        "src/console/**/*.ts",
+        "src/core/**/*.ts",
+        "src/solutions/**/*.ts",
     ],
     "exclude": [
-        "src/web/*.*"
-    ],
-    "angularCompilerOptions": {
-        "fullTemplateTypeCheck": true,
-        "strictInjectionParameters": true
-    }
+        "src/web/**/*.ts",
+    ]
 }
