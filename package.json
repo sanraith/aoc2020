@@ -3,6 +3,7 @@
     "version": "0.0.0",
     "scripts": {
         "con": "SET DEBUG=aoc2020:* && nodemon --config \"./util/console-nodemon.json\"",
+        "deploy": "ts-node util/deploy.ts",
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
