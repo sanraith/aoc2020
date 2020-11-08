@@ -1,6 +1,8 @@
 const fs = require('fs');
 const childProcess = require('child_process');
+
 const deployDir = 'docs';
+const baseHref = 'https://sanraith.github.io/aoc2020/';
 
 async function runChildProcessAsync(command: string) {
     return new Promise((resolve, _) => {
@@ -13,10 +15,12 @@ async function runChildProcessAsync(command: string) {
 async function deployAsync() {
     console.log(`Clearing ./${deployDir}...`);
     fs.rmdirSync(deployDir, { recursive: true });
-    fs.mkdirSync(deployDir);
 
     console.log(`Building website...`);
-    await runChildProcessAsync(`ng build --prod --outputPath ${deployDir}`);
+    await runChildProcessAsync(`ng build --prod --base-href "${baseHref}" --outputPath ${deployDir}`);
+
+    console.log(`Adding ${deployDir}/.nojekyll for github pages...`);
+    fs.closeSync(fs.openSync(`${deployDir}/.nojekyll`, 'w'));
 
     console.log('Deployment finished.');
 }
