@@ -13,8 +13,7 @@ export default abstract class SolutionBase {
     private subscriber?: Subscriber<SolutionState> = null;
 
     init(input: string) {
-        const newLineRegex = /\r\n?|\n/g;
-        this.inputLines = input.split(newLineRegex);
+        this.inputLines = this.parseInputLines(input);
     }
 
     part1Async(): Observable<SolutionState> {
@@ -31,19 +30,17 @@ export default abstract class SolutionBase {
 
     private startPartAsync(partFunction: (() => string)): Observable<SolutionState> {
         return new Observable<SolutionState>(subscriber => {
-            if (!this.inputLines) {
-                subscriber.error(new SolutionError('No input provided!'));
-                subscriber.complete();
-                return;
-            }
-
-            if (this.subscriber) {
-                subscriber.error(new SolutionError('Another solution is already in progress!'));
-                subscriber.complete();
-                return;
-            }
-
             try {
+                if (!this.inputLines) {
+                    subscriber.error(new SolutionError('No input provided!'));
+                    return;
+                }
+
+                if (this.subscriber) {
+                    subscriber.error(new SolutionError('Another solution is already in progress!'));
+                    return;
+                }
+
                 this.subscriber = subscriber;
                 const result = partFunction();
                 subscriber.next(new SolutionResult(result));
@@ -54,5 +51,22 @@ export default abstract class SolutionBase {
                 this.subscriber = null;
             }
         });
+    }
+
+    private parseInputLines(input: string): string[] {
+        const newLineRegex = /\r\n?|\n/g;
+        const inputLines = input.split(newLineRegex);
+
+        let emptyCount: number;
+        const whiteSpaceLineRegex = /^\s*$/gm;
+        for (emptyCount = 0; emptyCount < inputLines.length; emptyCount++) {
+            const line = inputLines[inputLines.length - emptyCount - 1];
+            if (!whiteSpaceLineRegex.test(line)) {
+                break;
+            }
+        }
+        inputLines.splice(inputLines.length - emptyCount, emptyCount);
+
+        return inputLines;
     }
 }
