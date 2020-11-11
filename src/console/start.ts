@@ -1,24 +1,29 @@
-import * as fs from 'fs';
 import Debug from 'debug';
-import Day01 from '../solutions/day01';
+import { solutionManager } from '../core/solutionManager';
+import FileInputManager from './fileInputManager';
+
 const debug = Debug('aoc2020:console');
 
 debug('Console runner working!');
 
 async function app() {
     try {
-        const day01 = new Day01();
-        const input = fs.readFileSync('./inputs/day01.txt', { encoding: 'utf-8' });
-        day01.init(input);
+        const inputManager = new FileInputManager();
 
-        const state = await day01.part1Async().toPromise();
-        switch (state.type) {
-            case 'result':
-                debug(`Result: ${state.result}`);
-                break;
-            case 'error':
-                debug(`Error: ${state.message}`);
-                break;
+        for (const solutionInfo of solutionManager.getSolutions()) {
+            const solution = new solutionInfo.ctor();
+            const input = await inputManager.loadInputAsync(solutionInfo.day).toPromise();
+            solution.init(input);
+
+            const state = await solution.part1Async().toPromise();
+            switch (state.type) {
+                case 'result':
+                    debug(`Result: ${state.result}`);
+                    break;
+                case 'error':
+                    debug(`Error: ${state.message}`);
+                    break;
+            }
         }
     } catch (e) {
         debug(`Error: ${e}`);

@@ -1,16 +1,8 @@
-const fs = require('fs');
-const childProcess = require('child_process');
+import { runChildProcessAsync } from './helpers';
+import * as fs from 'fs';
 
 const deployDir = 'docs';
 const baseHref = 'https://sanraith.github.io/aoc2020/';
-
-async function runChildProcessAsync(command: string) {
-    return new Promise((resolve, _) => {
-        const child = childProcess.exec(command);
-        child.stdout.pipe(process.stdout);
-        child.on('exit', () => resolve());
-    });
-}
 
 async function deployAsync() {
     console.log(`Clearing ./${deployDir}...`);

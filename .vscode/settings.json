@@ -12,11 +12,8 @@
         "**/lib/**"
     ],
     "cSpell.words": [
-        "devb",
-        "tixid",
         "ttsc",
         "ttypescript",
-        "uuidv"
     ],
     "files.exclude": {
         "**/.git": true,
@@ -38,5 +35,7 @@
     "html.format.unformatted": "wbr,%",
     "emmet.includeLanguages": {
         "ejs": "html"
-    }
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.quoteStyle": "single"
 }

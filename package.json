@@ -4,7 +4,9 @@
     "scripts": {
         "dev": "SET DEBUG=aoc2020:* && nodemon --config \"./util/console-nodemon.json\"",
         "console_single": "SET DEBUG=aoc2020:* && ts-node -C typescript -P ./tsconfig.console.json src/console/start.ts",
-        "deploy": "ts-node util/deploy.ts",
+        "deploy": "ts-node -C typescript -P ./tsconfig.console.json util/deploy.ts",
+        "scaffold": "ts-node -C typescript -P ./tsconfig.console.json util/scaffold.ts",
+        "generate-index": "barrelsby --delete --singleQuotes --directory src/solutions",
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
@@ -29,12 +31,20 @@
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "~0.901.12",
+        "@angular-eslint/builder": "0.6.0-beta.0",
+        "@angular-eslint/eslint-plugin": "0.6.0-beta.0",
+        "@angular-eslint/eslint-plugin-template": "0.6.0-beta.0",
+        "@angular-eslint/schematics": "^0.6.0-beta.0",
+        "@angular-eslint/template-parser": "0.6.0-beta.0",
         "@angular/cli": "~9.1.12",
         "@angular/compiler-cli": "~9.1.12",
         "@types/debug": "^4.1.5",
         "@types/jasmine": "~3.5.0",
         "@types/jasminewd2": "~2.0.3",
         "@types/node": "^12.11.1",
+        "@typescript-eslint/eslint-plugin": "4.3.0",
+        "@typescript-eslint/parser": "4.3.0",
+        "barrelsby": "^2.2.0",
         "codelyzer": "^5.1.2",
         "eslint": "^7.6.0",
         "jasmine-core": "~3.5.0",
@@ -46,13 +56,6 @@
         "karma-jasmine-html-reporter": "^1.4.2",
         "protractor": "~7.0.0",
         "ts-node": "~8.3.0",
-        "typescript": "~3.8.3",
-        "@angular-eslint/builder": "0.6.0-beta.0",
-        "@angular-eslint/eslint-plugin": "0.6.0-beta.0",
-        "@angular-eslint/eslint-plugin-template": "0.6.0-beta.0",
-        "@angular-eslint/schematics": "^0.6.0-beta.0",
-        "@angular-eslint/template-parser": "0.6.0-beta.0",
-        "@typescript-eslint/eslint-plugin": "4.3.0",
-        "@typescript-eslint/parser": "4.3.0"
+        "typescript": "~3.8.3"
     }
 }
