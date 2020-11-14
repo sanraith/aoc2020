@@ -3,6 +3,7 @@ import { runChildProcessAsync } from './helpers';
 
 const solutionPath = './src/solutions/';
 const templateFilePath = './util/solutionTemplate.txt';
+const templateRegex__DAY_TWO_LETTER_NUMBER__ = /__DAY_TWO_LETTER_NUMBER__/g;
 const templateRegex__DAY_NUMBER__ = /__DAY_NUMBER__/g;
 const templateRegex__TITLE__ = /__TITLE__/g;
 const solutionFileRegex = /day[0-9]+\.ts/;
@@ -26,14 +27,16 @@ function getNextSolutionIndex(): number {
 }
 
 async function createNewSolutionFileAsync() {
-    const twoDigitIndex = getNextSolutionIndex().toString().padStart(2, '0');
-    const newFilePath = `${solutionPath}day${twoDigitIndex}.ts`;
+    const dayNumber = getNextSolutionIndex().toString();
+    const twoDigitDayNumber = dayNumber.padStart(2, '0');
+    const newFilePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
 
     console.log(`Creating new solution file: ${newFilePath}`);
     let contents = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
     contents = contents
-        .replace(templateRegex__DAY_NUMBER__, twoDigitIndex)
-        .replace(templateRegex__TITLE__, `Day${twoDigitIndex}Title`);
+        .replace(templateRegex__DAY_NUMBER__, dayNumber)
+        .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
+        .replace(templateRegex__TITLE__, `Day${twoDigitDayNumber}Title`);
     fs.writeFileSync(newFilePath, contents, { encoding: 'utf-8' });
 
     console.log('Updating solution index...');

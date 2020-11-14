@@ -5,19 +5,19 @@ type Constructor<T> = {
     readonly prototype: T;
 }
 
-const rawSolutionList: RawSolutionInfo[] = [];
+const rawSolutionList: SolutionInfo[] = [];
+
+export type SolutionInfo = SolutionInfoParams & {
+    create: () => SolutionBase;
+}
 
 export type SolutionInfoParams = {
-    day?: number,
+    day: number,
     title: string
 }
 
-export type RawSolutionInfo = SolutionInfoParams & {
-    ctor: Constructor<SolutionBase>
-}
-
 export function solutionInfo<TCtor extends Constructor<SolutionBase>>(info: SolutionInfoParams) {
-    return (ctor: TCtor) => { rawSolutionList.push({ ctor, ...info }); };
+    return (ctor: TCtor) => { rawSolutionList.push({ create: () => new ctor(), ...info }); };
 }
 
 export { rawSolutionList };
