@@ -1,22 +1,27 @@
-import { RawSolutionInfo, rawSolutionList } from './solutionInfo';
+import { RawSolutionInfo, SolutionInfoParams, rawSolutionList } from './solutionInfo';
+import SolutionBase from './solutionBase';
 import '../solutions'; // Discover solution files
 
-type SolutionInfo = RawSolutionInfo & {
-    day: number
+type SolutionInfo = SolutionInfoParams & {
+    day: number,
+    create: () => SolutionBase
 }
 
 class SolutionManager {
-    /** (day, info) map of solutions. */
-    private solutionMap: Map<number, SolutionInfo> = new Map();
+    /** Get the solutions in a (day, solutionInfo) map. */
+    getSolutionsByDay(): Map<number, SolutionInfo> {
+        const solutionMap = new Map<number, SolutionInfo>();
+        rawSolutionList.map(x => this.addSolution(solutionMap, x));
+        return solutionMap;
+    }
 
     /** Get the solutions in ascending order by day. */
     getSolutions(): SolutionInfo[] {
-        this.solutionMap = new Map();
-        rawSolutionList.map(x => this.addSolution(x));
-        return Array.from(this.solutionMap.values()).sort((a, b) => a.day - b.day);
+        return Array.from(this.getSolutionsByDay().values()).sort((a, b) => a.day - b.day);
     }
 
-    private addSolution(info: RawSolutionInfo): void {
+    private addSolution(solutionMap: Map<number, SolutionInfo>, info: RawSolutionInfo): void {
+        // Extract day from class name if not specified
         if (info.day === undefined) {
             const dayNumberMatch = /(?<=Day)([0-9]+)/g.exec(info.ctor.name);
             if (dayNumberMatch) {
@@ -27,12 +32,13 @@ class SolutionManager {
             }
         }
 
-        if (this.solutionMap.has(info.day)) {
+        // Do not store solutions without a specified day
+        if (solutionMap.has(info.day)) {
             console.log(`Could not register another solution for day ${info.day}. ${info.ctor}`);
             return;
         }
 
-        this.solutionMap.set(info.day, { ...info, day: info.day });
+        solutionMap.set(info.day, { ...info, day: info.day, create: () => new info.ctor() });
     }
 }
 

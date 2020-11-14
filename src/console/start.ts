@@ -11,8 +11,8 @@ async function app() {
         const inputManager = new FileInputManager();
 
         for (const solutionInfo of solutionManager.getSolutions()) {
-            const solution = new solutionInfo.ctor();
-            const input = await inputManager.loadInputAsync(solutionInfo.day).toPromise();
+            const solution = solutionInfo.create();
+            const input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
 
             const state = await solution.part1Async().toPromise();

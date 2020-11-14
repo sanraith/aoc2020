@@ -1,0 +1,73 @@
+@import "src/web/variables.scss";
+
+$_calendarWidth: 0.5; // Relative size of the calendar to its container
+$_calendarDayMargin: 0.01; // Margin between day boxes in container percentage 0..1
+$_calendarDayFontSize: 2.5; // Font size of calendar days in VW.
+
+$calendarMaxWidthPx: $vw * $_calendarWidth;
+$calendarWidthPct: percentage($_calendarWidth);
+$calendarDayMarginPct: percentage($_calendarDayMargin);
+$calendarDayWidthPct: percentage((1 - 6 * $_calendarDayMargin) / 7);
+$calendarDayFontSizeVw: $_calendarDayFontSize * 1vw;
+$calendarDayMaxFontSizeVw: $vw * 0.01 * $_calendarDayFontSize;
+
+.calendar {
+    width: $calendarWidthPct;
+    background-color: $extra1-color;
+    overflow: auto;
+}
+
+.calendarDay {
+    position: relative;
+    width: $calendarDayWidthPct;
+    background-color: $extra2-color;
+    float: left;
+    margin-right: $calendarDayMarginPct;
+    margin-bottom: $calendarDayMarginPct;
+}
+
+.calendarDay:before {
+    content: "";
+    display: block;
+    margin-top: 100%;
+}
+
+.calendarDay > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.calendarDay > div > p {
+    font-size: $calendarDayFontSizeVw;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.graySquare {
+    background-color: $extra2-gray-color;
+}
+
+.calendarDay:last-child {
+    margin-right: 0;
+}
+
+.calendarRow:last-child > .calendarDay {
+    margin-bottom: 0;
+}
+
+@media (min-width: $vw) {
+    .calendar {
+        width: $calendarMaxWidthPx;
+    }
+    .calendarDay > div > p {
+        font-size: $calendarDayMaxFontSizeVw;
+    }
+}

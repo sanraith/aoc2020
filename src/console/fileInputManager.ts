@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,17 +8,16 @@ export default class FileInputManager {
         this.inputPath = inputPath ?? './inputs/';
     }
 
-    loadInputAsync(day: number): Observable<string> {
-        return new Observable<string>(subscriber => {
+    loadInputAsync(day: number): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
             const twoDigitDay = day.toString().padStart(2, '0');
             const filePath = path.join(this.inputPath, `day${twoDigitDay}.txt`);
             fs.readFile(filePath, { encoding: 'utf-8' }, (err, data) => {
                 if (err) {
-                    subscriber.error(err);
+                    reject(err);
                 } else {
-                    subscriber.next(data);
+                    resolve(data);
                 }
-                subscriber.complete();
             });
         });
     }

@@ -5,12 +5,12 @@ type Constructor<T> = {
     readonly prototype: T;
 }
 
-type SolutionInfoParams = {
+const rawSolutionList: RawSolutionInfo[] = [];
+
+export type SolutionInfoParams = {
     day?: number,
     title: string
 }
-
-const rawSolutionList: RawSolutionInfo[] = [];
 
 export type RawSolutionInfo = SolutionInfoParams & {
     ctor: Constructor<SolutionBase>
