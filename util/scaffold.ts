@@ -6,8 +6,10 @@ const fsAsync = fs.promises;
 
 const inputPath = './input/';
 const solutionPath = './src/solutions/';
+const testPath = './tests/solutions/';
 const sessionConfigPath = './util/session.json';
-const templateFilePath = './util/solutionTemplate.txt';
+const solutionTemplatePath = './util/solutionTemplate.txt';
+const testTemplatePath = './util/testTemplate.txt';
 const templateRegex__DAY_TWO_LETTER_NUMBER__ = /__DAY_TWO_LETTER_NUMBER__/g;
 const templateRegex__DAY_NUMBER__ = /__DAY_NUMBER__/g;
 const templateRegex__TITLE__ = /__TITLE__/g;
@@ -93,6 +95,13 @@ async function tryLoadPuzzleDataFromWeb(year: number, dayNumber: number) {
     return { title, input };
 }
 
+function fillTemplate(template: string, twoDigitDayNumber: string, title: string): string {
+    return template
+        .replace(templateRegex__DAY_NUMBER__, dayNumber.toString())
+        .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
+        .replace(templateRegex__TITLE__, title);
+}
+
 async function createNewSolutionFilesAsync(dayNumber?: number) {
     console.log(`Scaffolding day ${dayNumber}.`);
 
@@ -101,6 +110,7 @@ async function createNewSolutionFilesAsync(dayNumber?: number) {
     const twoDigitDayNumber = dayNumber.toString().padStart(2, '0');
     const newSourcePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
     const newInputPath = `${inputPath}day${twoDigitDayNumber}.txt`;
+    const newTestPath = `${testPath}day${twoDigitDayNumber}.spec.ts`;
 
     let { title, input } = await tryLoadPuzzleDataFromWeb(year, dayNumber);
     title = title ?? `Day${twoDigitDayNumber}Title`;
@@ -110,14 +120,17 @@ async function createNewSolutionFilesAsync(dayNumber?: number) {
     await fsAsync.writeFile(newInputPath, input, { encoding: 'utf-8' });
 
     console.log(`Creating new solution file: ${newSourcePath}`);
-    let contents = (await fsAsync.readFile(templateFilePath, { encoding: 'utf-8' }))
-        .replace(templateRegex__DAY_NUMBER__, dayNumber.toString())
-        .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
-        .replace(templateRegex__TITLE__, title);
-    await fsAsync.writeFile(newSourcePath, contents, { encoding: 'utf-8' });
+    const solutionTemplate = await fsAsync.readFile(solutionTemplatePath, { encoding: 'utf-8' });
+    const solutionContents = fillTemplate(solutionTemplate, twoDigitDayNumber, title);
+    await fsAsync.writeFile(newSourcePath, solutionContents, { encoding: 'utf-8' });
 
     console.log(`Updating index: ${solutionPath}index.ts`);
     await runChildProcessAsync('npm run generate-index', false);
+
+    console.log(`Creating new test file: ${newTestPath}`);
+    const testTemplate = await fsAsync.readFile(testTemplatePath, { encoding: 'utf-8' });
+    const testContents = fillTemplate(testTemplate, twoDigitDayNumber, title);
+    await fsAsync.writeFile(newTestPath, testContents, { encoding: 'utf-8' });
 
     console.log('Done.');
 }

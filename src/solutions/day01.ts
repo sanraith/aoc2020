@@ -8,10 +8,10 @@ import { solutionInfo } from '../core/solutionInfo';
 export class Day01 extends SolutionBase {
 
     protected part1(): string {
-        return 'Day 01 part 1 solution';
+        return 'Day01Part1';
     }
 
     protected part2(): string {
-        return 'Day 01 part 2 solution';
+        return 'Day01Part2';
     }
 }

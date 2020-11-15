@@ -15,15 +15,8 @@ async function app() {
             const input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
 
-            const state = await solution.part1Async().toPromise();
-            switch (state.type) {
-                case 'result':
-                    debug(`Result: ${state.result}`);
-                    break;
-                case 'error':
-                    debug(`Error: ${state.message}`);
-                    break;
-            }
+            const result = await solution.part1Async();
+            debug(`Result: ${result}`);
         }
     } catch (e) {
         debug(`Error: ${e}`);

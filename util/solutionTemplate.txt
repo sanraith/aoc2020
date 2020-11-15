@@ -8,10 +8,10 @@ import { solutionInfo } from '../core/solutionInfo';
 export class Day__DAY_TWO_LETTER_NUMBER__ extends SolutionBase {
 
     protected part1(): string {
-        return 'Day __DAY_TWO_LETTER_NUMBER__ part 1 solution';
+        return 'Day__DAY_TWO_LETTER_NUMBER__Part1';
     }
 
     protected part2(): string {
-        return 'Day __DAY_TWO_LETTER_NUMBER__ part 2 solution';
+        return 'Day__DAY_TWO_LETTER_NUMBER__Part2';
     }
 }

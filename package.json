@@ -7,10 +7,11 @@
         "deploy": "ts-node -C typescript -P ./tsconfig.console.json util/deploy.ts",
         "scaffold": "ts-node -C typescript -P ./tsconfig.console.json util/scaffold.ts",
         "generate-index": "barrelsby --delete --singleQuotes --directory src/solutions",
+        "test": "jasmine-ts --project tsconfig.console.json --config=tests/jasmine.json ",
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
-        "test": "ng test",
+        "ngtest": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
     },
@@ -50,13 +51,14 @@
         "eslint": "^7.6.0",
         "jasmine-core": "~3.5.0",
         "jasmine-spec-reporter": "~5.0.0",
+        "jasmine-ts": "^0.3.0",
         "karma": "~5.0.0",
         "karma-chrome-launcher": "~3.1.0",
         "karma-coverage-istanbul-reporter": "~3.0.2",
         "karma-jasmine": "~4.0.0",
         "karma-jasmine-html-reporter": "^1.5.0",
         "protractor": "~7.0.0",
-        "ts-node": "~8.3.0",
+        "ts-node": "^8.3.0",
         "typescript": "~4.0.5"
     }
 }

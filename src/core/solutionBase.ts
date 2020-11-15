@@ -12,21 +12,38 @@ export default abstract class SolutionBase {
 
     private subscriber?: Subscriber<SolutionState> = null;
 
-    init(input: string) {
+    init(input: string): SolutionBase {
         this.inputLines = this.parseInputLines(input);
+        return this;
     }
 
-    part1Async(): Observable<SolutionState> {
+    part1Async(): Promise<string | undefined> {
+        return this.getResultAsync(this.part1WithProgressAsync());
+    }
+
+    part2Async(): Promise<string | undefined> {
+        return this.getResultAsync(this.part2WithProgressAsync());
+    }
+
+    part1WithProgressAsync(): Observable<SolutionState> {
         return this.startPartAsync(this.part1);
     }
 
-    part2Async(): Observable<SolutionState> {
+    part2WithProgressAsync(): Observable<SolutionState> {
         return this.startPartAsync(this.part2);
     }
 
     protected abstract part1(): string;
 
     protected abstract part2(): string;
+
+    private async getResultAsync(partObservable: Observable<SolutionState>): Promise<string | undefined> {
+        const state = await partObservable.toPromise();
+        switch (state.type) {
+            case 'result': return state.result;
+            default: return undefined;
+        }
+    }
 
     private startPartAsync(partFunction: (() => string)): Observable<SolutionState> {
         return new Observable<SolutionState>(subscriber => {
@@ -42,7 +59,7 @@ export default abstract class SolutionBase {
                 }
 
                 this.subscriber = subscriber;
-                const result = partFunction();
+                const result = partFunction.apply(this);
                 subscriber.next(new SolutionResult(result));
             } catch (exception) {
                 subscriber.error(new SolutionError(exception));
