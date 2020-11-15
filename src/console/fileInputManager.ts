@@ -5,7 +5,7 @@ export default class FileInputManager {
     private inputPath: string;
 
     constructor(inputPath?: string) {
-        this.inputPath = inputPath ?? './inputs/';
+        this.inputPath = inputPath ?? './input/';
     }
 
     loadInputAsync(day: number): Promise<string> {

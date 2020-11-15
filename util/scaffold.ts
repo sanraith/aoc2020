@@ -1,7 +1,12 @@
 import * as fs from 'fs';
+import * as https from 'https';
+import * as cheerio from 'cheerio';
 import { runChildProcessAsync } from './helpers';
+const fsAsync = fs.promises;
 
+const inputPath = './input/';
 const solutionPath = './src/solutions/';
+const sessionConfigPath = './util/session.json';
 const templateFilePath = './util/solutionTemplate.txt';
 const templateRegex__DAY_TWO_LETTER_NUMBER__ = /__DAY_TWO_LETTER_NUMBER__/g;
 const templateRegex__DAY_NUMBER__ = /__DAY_NUMBER__/g;
@@ -9,9 +14,9 @@ const templateRegex__TITLE__ = /__TITLE__/g;
 const solutionFileRegex = /day[0-9]+\.ts/;
 const solutionIndexRegex = /(?<=day)([0-9]+)(?=\.ts)/;
 
-function getNextSolutionIndex(): number {
+async function getNextSolutionIndex(): Promise<number> {
     let maxIndex = 0;
-    const files = fs.readdirSync(solutionPath);
+    const files = await fsAsync.readdir(solutionPath);
     for (const file of files.filter(x => x.match(solutionFileRegex))) {
         solutionIndexRegex.lastIndex = 0;
         const result = solutionIndexRegex.exec(file);
@@ -26,21 +31,97 @@ function getNextSolutionIndex(): number {
     return maxIndex + 1;
 }
 
-async function createNewSolutionFileAsync() {
-    const dayNumber = getNextSolutionIndex().toString();
-    const twoDigitDayNumber = dayNumber.padStart(2, '0');
-    const newFilePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
+async function readSessionKeyAsync(): Promise<string> {
+    let sessionData: { sessionKey: string } = { sessionKey: '' };
+    try {
+        if (!fs.existsSync(sessionConfigPath)) {
+            await fsAsync.writeFile(sessionConfigPath, JSON.stringify(sessionData, null, 4), { encoding: 'utf-8' });
+        }
+        sessionData = JSON.parse(await fsAsync.readFile(sessionConfigPath, { encoding: 'utf-8' }));
+    } catch (error) {
+        console.log(error);
+    }
 
-    console.log(`Creating new solution file: ${newFilePath}`);
-    let contents = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
-    contents = contents
-        .replace(templateRegex__DAY_NUMBER__, dayNumber)
-        .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
-        .replace(templateRegex__TITLE__, `Day${twoDigitDayNumber}Title`);
-    fs.writeFileSync(newFilePath, contents, { encoding: 'utf-8' });
+    const key = sessionData.sessionKey;
+    if (!key || key.length === 0) {
+        return undefined;
+    }
 
-    console.log('Updating solution index...');
-    await runChildProcessAsync('npm run generate-index');
+    return key;
 }
 
-createNewSolutionFileAsync();
+function puzzleDataWebRequest(year: number, day: number, type: 'description' | 'input', sessionKey: string): Promise<string> {
+    const path = type === 'description' ? `/${year}/day/${day}` : `/${year}/day/${day}/input`;
+    const requestOptions = {
+        hostname: 'adventofcode.com',
+        path: path,
+        method: 'GET',
+        headers: { Cookie: `session=${sessionKey}` }
+    };
+
+    return new Promise((resolve, reject) => {
+        const req = https.get(requestOptions, res => {
+            console.log(`Response for ${type}: ${res.statusCode}`);
+            res.on('data', d => resolve(d.toString()));
+        });
+        req.on('error', error => reject(error));
+        req.end();
+    });
+}
+
+async function tryLoadPuzzleDataFromWeb(year: number, dayNumber: number) {
+    const webTitleRegex = /(?<=.*: )(.*)(?= ---)/g;
+    let title = undefined;
+    let input = undefined;
+
+    const sessionKey = await readSessionKeyAsync();
+    if (sessionKey) {
+        console.log(`Session key loaded. Asking adventofcode.com for details...`);
+        try {
+            const page = await puzzleDataWebRequest(year, dayNumber, 'description', sessionKey);
+            const $ = cheerio.load(page);
+            title = $('h2').first().text().match(webTitleRegex)[0];
+            input = await puzzleDataWebRequest(year, dayNumber, 'input', sessionKey);
+        } catch (error) {
+            console.log('Could not get puzzle data from adventofcode.com.');
+            console.log(error);
+        }
+        console.log(`--- ${dayNumber} ${title} ---`);
+    } else {
+        console.log(`--- Fill config to load puzzle data from web: ${sessionConfigPath} ---`);
+    }
+    return { title, input };
+}
+
+async function createNewSolutionFilesAsync(dayNumber?: number) {
+    console.log(`Scaffolding day ${dayNumber}.`);
+
+    const year = 2019;
+    dayNumber = dayNumber ?? await getNextSolutionIndex();
+    const twoDigitDayNumber = dayNumber.toString().padStart(2, '0');
+    const newSourcePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
+    const newInputPath = `${inputPath}day${twoDigitDayNumber}.txt`;
+
+    let { title, input } = await tryLoadPuzzleDataFromWeb(year, dayNumber);
+    title = title ?? `Day${twoDigitDayNumber}Title`;
+    input = input ?? `Day${twoDigitDayNumber}Input`;
+
+    console.log(`Saving input file: ${newInputPath}`);
+    await fsAsync.writeFile(newInputPath, input, { encoding: 'utf-8' });
+
+    console.log(`Creating new solution file: ${newSourcePath}`);
+    let contents = (await fsAsync.readFile(templateFilePath, { encoding: 'utf-8' }))
+        .replace(templateRegex__DAY_NUMBER__, dayNumber.toString())
+        .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
+        .replace(templateRegex__TITLE__, title);
+    await fsAsync.writeFile(newSourcePath, contents, { encoding: 'utf-8' });
+
+    console.log(`Updating index: ${solutionPath}index.ts`);
+    await runChildProcessAsync('npm run generate-index', false);
+
+    console.log('Done.');
+}
+
+const parameters = process.argv.slice(2);
+const dayNumber = parameters[0] === undefined ? undefined : parseInt(parameters[0]);
+createNewSolutionFilesAsync(dayNumber);
