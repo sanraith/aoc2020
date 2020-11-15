@@ -12,11 +12,13 @@ async function app() {
 
         for (const solutionInfo of solutionManager.getSolutions()) {
             const solution = solutionInfo.create();
-            const input = await inputManager.loadInputAsync(solutionInfo.day);
+            let input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
 
-            const result = await solution.part1Async();
-            debug(`Result: ${result}`);
+            const result1 = await solution.part1Async();
+            debug(`Result1: ${result1}`);
+            const result2 = await solution.part2Async();
+            debug(`Result2: ${result2}`);
         }
     } catch (e) {
         debug(`Error: ${e}`);
