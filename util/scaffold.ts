@@ -95,7 +95,7 @@ async function tryLoadPuzzleDataFromWeb(year: number, dayNumber: number) {
     return { title, input };
 }
 
-function fillTemplate(template: string, twoDigitDayNumber: string, title: string): string {
+function fillTemplate(template: string, dayNumber: number, twoDigitDayNumber: string, title: string): string {
     return template
         .replace(templateRegex__DAY_NUMBER__, dayNumber.toString())
         .replace(templateRegex__DAY_TWO_LETTER_NUMBER__, twoDigitDayNumber)
@@ -121,7 +121,7 @@ async function createNewSolutionFilesAsync(dayNumber?: number) {
 
     console.log(`Creating new solution file: ${newSourcePath}`);
     const solutionTemplate = await fsAsync.readFile(solutionTemplatePath, { encoding: 'utf-8' });
-    const solutionContents = fillTemplate(solutionTemplate, twoDigitDayNumber, title);
+    const solutionContents = fillTemplate(solutionTemplate, dayNumber, twoDigitDayNumber, title);
     await fsAsync.writeFile(newSourcePath, solutionContents, { encoding: 'utf-8' });
 
     console.log(`Updating index: ${solutionPath}index.ts`);
@@ -129,7 +129,7 @@ async function createNewSolutionFilesAsync(dayNumber?: number) {
 
     console.log(`Creating new test file: ${newTestPath}`);
     const testTemplate = await fsAsync.readFile(testTemplatePath, { encoding: 'utf-8' });
-    const testContents = fillTemplate(testTemplate, twoDigitDayNumber, title);
+    const testContents = fillTemplate(testTemplate, dayNumber, twoDigitDayNumber, title);
     await fsAsync.writeFile(newTestPath, testContents, { encoding: 'utf-8' });
 
     console.log('Done.');
