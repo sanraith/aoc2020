@@ -1,4 +1,4 @@
-<h1>App works!</h1>
+<h1>Advent of Code 2020</h1>
 
 <div class="calendar">
     <div class="calendarRow" *ngFor="let row of dayRows">
@@ -8,6 +8,12 @@
             </div>
         </div>
     </div>
+</div>
+
+<h2>Test solutions from 2019:</h2>
+
+<div *ngFor="let solutionInfo of solutionInfos">
+    <app-card [solutionInfo]='solutionInfo'></app-card>
 </div>
 
 <router-outlet></router-outlet>

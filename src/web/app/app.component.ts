@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { solutionManager } from '../../core/solutionManager';
 
 @Component({
     selector: 'app-root',
@@ -14,20 +15,10 @@ export class AppComponent implements OnInit {
             return a;
         }, []);
 
+    solutionInfos = solutionManager.getSolutions();
+
     constructor() { }
 
     ngOnInit(): void {
     }
-}
-
-if (typeof Worker !== 'undefined') {
-    // Create a new web worker
-    const worker = new Worker('./solution.worker', { type: 'module' });
-    worker.onmessage = ({ data }) => {
-        console.log(`page got message: ${data}`);
-    };
-    worker.postMessage('hello');
-} else {
-    // Web Workers are not supported in this environment.
-    // You should add a fallback so that your program still executes correctly.
 }

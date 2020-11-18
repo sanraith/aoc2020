@@ -1,7 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 @import "variables.scss";
 
+html,
+body {
+    font-family: "Noto Sans", sans-serif;
+}
+
 body {
     background-color: $light-bgcolor;
     color: $dark-fgcolor;
+    margin: 0;
+    padding: 0;
+}
+
+.root-outer {
+    width: $vw;
+    margin: 0 auto;
+    overflow: auto;
+    background-color: $extra1-color;
+}
+
+.root-outer > div {
+    padding: 2.5rem;
+}
+
+@media (max-width: $vw) {
+    .root-outer {
+        width: 100%;
+    }
 }

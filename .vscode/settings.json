@@ -12,8 +12,9 @@
         "**/lib/**"
     ],
     "cSpell.words": [
+        "preconnect",
         "ttsc",
-        "ttypescript",
+        "ttypescript"
     ],
     "files.exclude": {
         "**/.git": true,

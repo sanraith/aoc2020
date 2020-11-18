@@ -1,5 +1,12 @@
 @import "src/web/variables.scss";
 
+h1 {
+    text-align: center;
+    margin-top: 0;
+}
+
+// Calendar
+
 $_calendarWidth: 0.5; // Relative size of the calendar to its container
 $_calendarDayMargin: 0.01; // Margin between day boxes in container percentage 0..1
 $_calendarDayFontSize: 2.5; // Font size of calendar days in VW.
@@ -15,6 +22,7 @@ $calendarDayMaxFontSizeVw: $vw * 0.01 * $_calendarDayFontSize;
     width: $calendarWidthPct;
     background-color: $extra1-color;
     overflow: auto;
+    margin: 0 auto;
 }
 
 .calendarDay {

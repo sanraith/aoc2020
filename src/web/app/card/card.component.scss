@@ -1,0 +1,17 @@
+@import "src/web/variables.scss";
+
+article {
+    margin-top: 2rem;
+    background-color: $light-bgcolor;
+    padding: 1rem;
+}
+
+article > p {
+    margin: 0;
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: bolder;
+    margin: 0;
+}
