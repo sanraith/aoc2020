@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SolutionInfo } from '../../../core/solutionInfo';
+import { InputService } from '../services/input.service';
 import { WorkerService } from '../services/worker.service';
 
 @Component({
@@ -14,14 +15,18 @@ export class CardComponent implements OnInit {
     results: string[] = Array(2).fill('');
     isBusy: boolean;
 
-    constructor(private worker: WorkerService) { }
+    constructor(
+        private workerService: WorkerService,
+        private inputService: InputService) { }
 
     ngOnInit(): void {
+        this.loadInput();
     }
 
     async solve() {
+        this.isBusy = true;
         for (let i = 0; i < 2; i++) {
-            let state = await this.worker.solve(this.solutionInfo.day, <1 | 2>(i + 1), this.input).toPromise();
+            let state = await this.workerService.solve(this.solutionInfo.day, i + 1, this.input).toPromise();
             switch (state.type) {
                 case 'result':
                     this.results[i] = state.result; this.isBusy = false; break;
@@ -29,5 +34,12 @@ export class CardComponent implements OnInit {
                     this.results[i] = 'error'; this.isBusy = false; break;
             }
         }
+        this.isBusy = false;
+    }
+
+    private async loadInput() {
+        this.isBusy = true;
+        this.input = await this.inputService.getInput(this.solutionInfo.day);
+        this.isBusy = false;
     }
 }

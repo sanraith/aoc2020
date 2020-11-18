@@ -3,6 +3,7 @@
 h1 {
     text-align: center;
     margin-top: 0;
+    font-family: "Merienda One", cursive;
 }
 
 // Calendar
@@ -23,6 +24,7 @@ $calendarDayMaxFontSizeVw: $vw * 0.01 * $_calendarDayFontSize;
     background-color: $extra1-color;
     overflow: auto;
     margin: 0 auto;
+    margin-bottom: 3rem;
 }
 
 .calendarDay {

@@ -9,7 +9,7 @@ import { SolveRequest } from './solveRequest';
 export class WorkerService {
     constructor() { }
 
-    solve(day: number, part: 1 | 2, input: string): Observable<SolutionState> {
+    solve(day: number, part: number, input: string): Observable<SolutionState> {
         return new Observable(subscriber => {
             const worker = this.createWorker();
             worker.onmessage = ({ data }: { data: SolutionState }) => {

@@ -2,8 +2,8 @@
     <p class="title">
         Day {{solutionInfo.day.toString().padStart(2,'0')}} - {{solutionInfo.title}}
     </p>
-    <input type="text" [(ngModel)]="input" />
     <button style="float: right;" (click)="solve()" [disabled]="isBusy">Solve</button>
     <p>Part 1: {{results[0]}}</p>
     <p>Part 2: {{results[1]}}</p>
+    <textarea [(ngModel)]="input"></textarea>
 </article>

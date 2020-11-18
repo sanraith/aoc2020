@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio';
 import { runChildProcessAsync } from './helpers';
 const fsAsync = fs.promises;
 
-const inputPath = './input/';
+const inputPath = './src/web/assets/input/';
 const solutionPath = './src/solutions/';
 const testPath = './tests/solutions/';
 const sessionConfigPath = './util/session.json';
