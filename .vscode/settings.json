@@ -16,7 +16,8 @@
         "preconnect",
         "ttsc",
         "ttypescript",
-        "unselectable"
+        "unselectable",
+        "unsub"
     ],
     "files.exclude": {
         "**/.git": true,

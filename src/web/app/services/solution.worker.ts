@@ -3,8 +3,9 @@
 import { solutionManager } from '../../../core/solutionManager';
 import { SolveRequest } from './solveRequest';
 
+const solutionInfos = solutionManager.getSolutionsByDay();
+
 addEventListener('message', ({ data }: { data: SolveRequest }) => {
-    const solutionInfos = solutionManager.getSolutionsByDay();
     const solution = solutionInfos.get(data.day).create();
     solution.init(data.input);
 
