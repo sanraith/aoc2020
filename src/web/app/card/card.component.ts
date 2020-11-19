@@ -14,6 +14,9 @@ export class CardComponent implements OnInit {
     input = '100756'; // TODO populate from input files
     results: string[] = Array(2).fill('');
     isBusy: boolean;
+    isInputFieldVisible: boolean;
+
+    get twoLetterDay(): string { return this.solutionInfo.day.toString().padStart(2, '0'); }
 
     constructor(
         private workerService: WorkerService,
@@ -21,6 +24,10 @@ export class CardComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadInput();
+    }
+
+    toggleInput() {
+        this.isInputFieldVisible = !this.isInputFieldVisible;
     }
 
     async solve() {

@@ -1,9 +1,25 @@
-<article>
-    <p class="title">
-        Day {{solutionInfo.day.toString().padStart(2,'0')}} - {{solutionInfo.title}}
-    </p>
-    <button style="float: right;" (click)="solve()" [disabled]="isBusy">Solve</button>
-    <p>Part 1: {{results[0]}}</p>
-    <p>Part 2: {{results[1]}}</p>
-    <textarea [(ngModel)]="input"></textarea>
+<article [id]="'day' + solutionInfo.day.toString()">
+    <aside class="bigNumber">{{twoLetterDay}}</aside>
+    <div>
+        <div class="title">{{solutionInfo.title}}</div>
+        <div>
+            <aside class="solveButtonColumn">
+                <button (click)="solve()" [disabled]="isBusy">Solve</button>
+            </aside>
+            <div>
+                <p>Part 1: {{results[0]}}</p>
+                <p>Part 2: {{results[1]}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer unselectable">
+        <a [href]="'https://adventofcode.com/2020/day/' + solutionInfo.day.toString()" target="_blank">Puzzle</a>
+        <span class="spacer"></span>
+        <a [href]="'https://github.com/sanraith/aoc2020/blob/main/src/solutions/day'+twoLetterDay+'.ts'"
+            target="_blank">Source</a>
+        <span class="spacer"></span>
+        <a (click)="toggleInput()" nohref>Input</a>
+    </div>
+
+    <textarea [(ngModel)]="input" *ngIf="isInputFieldVisible" [rows]="5.5"></textarea>
 </article>

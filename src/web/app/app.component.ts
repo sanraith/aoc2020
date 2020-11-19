@@ -1,4 +1,6 @@
+import { ViewportScroller } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { element } from 'protractor';
 import { solutionManager } from '../../core/solutionManager';
 
 @Component({
@@ -8,17 +10,23 @@ import { solutionManager } from '../../core/solutionManager';
 })
 export class AppComponent implements OnInit {
     title = 'Advent of Code 2020 in Typescript';
-    dayRows = Array(5 * 7).fill(-1)
+    solutionInfos = solutionManager.getSolutions();
+    solutionInfosByDay = solutionManager.getSolutionsByDay();
+    dayRows: { number: number, hasSolution: boolean }[][] = Array(5 * 7).fill(-1)
         .map((_, i) => i > 0 && i <= 31 ? i : -1)
         .reduce((a, x, i) => {
-            (a[Math.floor(i / 7)] ?? a[a.push([]) - 1]).push(x);
+            a[Math.floor(i / 7)].push({
+                number: x,
+                hasSolution: this.solutionInfosByDay.has(x)
+            });
             return a;
-        }, []);
+        }, Array(5).fill(0).map(_ => []));
 
-    solutionInfos = solutionManager.getSolutions();
+    constructor(private viewPortScroller: ViewportScroller) { }
 
-    constructor() { }
+    ngOnInit(): void { }
 
-    ngOnInit(): void {
+    scrollToAnchor(elementId: string) {
+        this.viewPortScroller.scrollToAnchor(elementId);
     }
 }

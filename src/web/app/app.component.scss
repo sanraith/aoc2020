@@ -73,6 +73,12 @@ $calendarDayMaxFontSizeVw: $vw * 0.01 * $_calendarDayFontSize;
     margin-bottom: 0;
 }
 
+$glowSize: 5px;
+.activeDay {
+    box-shadow: inset 0 0 $glowSize $glowSize $light-bgcolor; //rgb(255, 255, 255); //rgb(190, 49, 49);
+    cursor: pointer;
+}
+
 @media (min-width: $vw) {
     .calendar {
         width: $calendarMaxWidthPx;

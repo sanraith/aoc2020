@@ -12,9 +12,11 @@
         "**/lib/**"
     ],
     "cSpell.words": [
+        "Scroller",
         "preconnect",
         "ttsc",
-        "ttypescript"
+        "ttypescript",
+        "unselectable"
     ],
     "files.exclude": {
         "**/.git": true,

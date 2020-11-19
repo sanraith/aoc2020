@@ -1,10 +1,13 @@
 <h1>Advent of Code 2020</h1>
 
-<div class="calendar">
+<div class="calendar unselectable">
     <div class="calendarRow" *ngFor="let row of dayRows">
-        <div class="calendarDay" [class.graySquare]="day < 0" *ngFor="let day of row">
+        <div class="calendarDay" [class.graySquare]="day.number < 0" [class.activeDay]="day.hasSolution"
+            *ngFor="let day of row;" (click)="day.hasSolution && scrollToAnchor('day' + day.number)">
             <div>
-                <p>{{day > 0 ? day : ''}}</p>
+                <p>
+                    {{day.number > 0 ? day.number : ''}}
+                </p>
             </div>
         </div>
     </div>

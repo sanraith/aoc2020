@@ -24,6 +24,14 @@ body {
     padding: 2.5rem;
 }
 
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 @media (max-width: $vw) {
     .root-outer {
         width: 100%;
