@@ -11,7 +11,7 @@ import { WorkerService } from '../services/worker.service';
 export class CardComponent implements OnInit {
     @Input() solutionInfo: SolutionInfo;
 
-    input = '100756'; // TODO populate from input files
+    input = '';
     results: string[] = Array(2).fill('');
     isBusy: boolean;
     isInputFieldVisible: boolean;
@@ -36,9 +36,9 @@ export class CardComponent implements OnInit {
             let state = await this.workerService.solve(this.solutionInfo.day, i + 1, this.input).toPromise();
             switch (state.type) {
                 case 'result':
-                    this.results[i] = state.result; this.isBusy = false; break;
+                    this.results[i] = state.result; break;
                 case 'error':
-                    this.results[i] = 'error'; this.isBusy = false; break;
+                    this.results[i] = 'error'; break;
             }
         }
         this.isBusy = false;
