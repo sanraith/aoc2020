@@ -4,6 +4,7 @@ article {
     margin-top: 1rem;
     background-color: $light-bgcolor;
     padding: 1rem;
+    overflow: auto;
 
     p {
         margin: 0;
@@ -49,6 +50,7 @@ article {
 
     td {
         vertical-align: top;
+        padding-bottom: 0;
     }
     td:first-child {
         padding-left: 0;
@@ -56,10 +58,11 @@ article {
 }
 
 .solveButtonColumn {
-    width: 15%;
+    width: 25%;
     min-width: 4rem;
     float: right;
     overflow: auto;
+    margin-left: 1rem;
 
     button {
         width: 100%;
@@ -68,8 +71,14 @@ article {
 }
 
 .footer {
-    margin-top: 0.5rem;
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+}
+.footer::before,
+.footer::after {
+    content: "";
 }
 
 a {
@@ -81,10 +90,4 @@ a {
 textarea {
     margin-top: 0.5rem;
     width: 100%;
-}
-
-.spacer:before {
-    content: " ";
-    display: inline-block;
-    width: 2.5%;
 }

@@ -1,36 +1,32 @@
 <article [id]="'day' + solutionInfo.day.toString()">
     <aside class="bigNumber">{{twoLetterDay}}</aside>
     <div>
+        <aside class="solveButtonColumn">
+            <button (click)="solve()" [disabled]="isBusy">Solve</button>
+            <div class="footer">
+                <a (click)="toggleInput()" nohref>Input</a>
+                <a [href]="'https://github.com/sanraith/aoc2020/blob/main/src/solutions/day'+twoLetterDay+'.ts'"
+                    target="_blank">Source</a>
+                <a [href]="'https://adventofcode.com/2020/day/' + solutionInfo.day.toString()"
+                    target="_blank">Puzzle</a>
+            </div>
+        </aside>
         <div class="title">{{solutionInfo.title}}</div>
         <div>
-            <aside class="solveButtonColumn">
-                <button (click)="solve()" [disabled]="isBusy">Solve</button>
-            </aside>
-            <div>
-                <table class="solutionTable">
-                    <tr *ngFor="let result of results; let i = index">
-                        <td>Part {{i + 1}}:</td>
-                        <td>
-                            <pre class="solutionResult">{{result.value}}</pre>
-                        </td>
-                        <td class="solutionTime">
-                            <span class="unselectable" *ngIf="result.time !== undefined">
-                                ({{result.time}} ms)
-                            </span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <table class="solutionTable">
+                <tr *ngFor="let result of results; let i = index">
+                    <td>Part {{i + 1}}:</td>
+                    <td>
+                        <pre class="solutionResult">{{result.value}}</pre>
+                    </td>
+                    <td class="solutionTime">
+                        <span class="unselectable" *ngIf="result.time !== undefined">
+                            ({{result.time}} ms)
+                        </span>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
-    <div class="footer unselectable">
-        <a [href]="'https://adventofcode.com/2020/day/' + solutionInfo.day.toString()" target="_blank">Puzzle</a>
-        <span class="spacer"></span>
-        <a [href]="'https://github.com/sanraith/aoc2020/blob/main/src/solutions/day'+twoLetterDay+'.ts'"
-            target="_blank">Source</a>
-        <span class="spacer"></span>
-        <a (click)="toggleInput()" nohref>Input</a>
-    </div>
-
     <textarea [(ngModel)]="input" *ngIf="isInputFieldVisible" [rows]="5.5"></textarea>
 </article>
