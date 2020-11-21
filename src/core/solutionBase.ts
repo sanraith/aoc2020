@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { Subscriber } from 'rxjs/internal/Subscriber';
 import { SolutionError, SolutionResult, SolutionState } from './solutionProgress';
+import { Stopwatch } from 'ts-stopwatch';
 
 /**
  * Base class for solutions.
@@ -17,20 +18,42 @@ export default abstract class SolutionBase {
         return this;
     }
 
-    part1Async(): Promise<string | undefined> {
-        return this.getResultAsync(this.part1WithProgressAsync());
+    solveAsync(part: number): Promise<string | undefined> {
+        return this.getResultAsync(this.solveWithProgressAsync(part));
     }
 
-    part2Async(): Promise<string | undefined> {
-        return this.getResultAsync(this.part2WithProgressAsync());
-    }
+    solveWithProgressAsync(part: number): Observable<SolutionState> {
+        return new Observable<SolutionState>(subscriber => {
+            const stopwatch = new Stopwatch();
+            try {
+                if (part !== 1 && part !== 2) {
+                    subscriber.error(new SolutionError(part, 'Invalid part requested!'));
+                    return;
+                }
+                if (!this.inputLines) {
+                    subscriber.error(new SolutionError(part, 'No input provided!'));
+                    return;
+                }
+                if (this.subscriber) {
+                    subscriber.error(new SolutionError(part, 'Another solution is already in progress!'));
+                    return;
+                }
+                const partFunction = part === 1 ? this.part1 : this.part2;
+                this.subscriber = subscriber;
 
-    part1WithProgressAsync(): Observable<SolutionState> {
-        return this.startPartAsync(this.part1);
-    }
+                stopwatch.start();
+                const result = partFunction.apply(this);
+                const timeMs = stopwatch.stop();
 
-    part2WithProgressAsync(): Observable<SolutionState> {
-        return this.startPartAsync(this.part2);
+                subscriber.next(new SolutionResult(part, result, timeMs));
+            } catch (exception) {
+                const timeMs = stopwatch.stop();
+                subscriber.next(new SolutionError(part, exception, timeMs));
+            } finally {
+                subscriber.complete();
+                this.subscriber = null;
+            }
+        });
     }
 
     protected abstract part1(): string;
@@ -43,31 +66,6 @@ export default abstract class SolutionBase {
             case 'result': return state.result;
             default: return undefined;
         }
-    }
-
-    private startPartAsync(partFunction: (() => string)): Observable<SolutionState> {
-        return new Observable<SolutionState>(subscriber => {
-            try {
-                if (!this.inputLines) {
-                    subscriber.error(new SolutionError('No input provided!'));
-                    return;
-                }
-
-                if (this.subscriber) {
-                    subscriber.error(new SolutionError('Another solution is already in progress!'));
-                    return;
-                }
-
-                this.subscriber = subscriber;
-                const result = partFunction.apply(this);
-                subscriber.next(new SolutionResult(result));
-            } catch (exception) {
-                subscriber.error(new SolutionError(exception));
-            } finally {
-                subscriber.complete();
-                this.subscriber = null;
-            }
-        });
     }
 
     private parseInputLines(input: string): string[] {

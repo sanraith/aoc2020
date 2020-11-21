@@ -12,7 +12,10 @@ export class CardComponent implements OnInit {
     @Input() solutionInfo: SolutionInfo;
 
     input = '';
-    results: string[] = Array(2).fill('');
+    results: {
+        value?: string,
+        time?: number
+    }[] = [{}, {}];
     isBusy: boolean;
     isInputFieldVisible: boolean;
 
@@ -32,16 +35,26 @@ export class CardComponent implements OnInit {
 
     async solve() {
         this.isBusy = true;
-        for (let i = 0; i < 2; i++) {
-            let state = await this.workerService.solve(this.solutionInfo.day, i + 1, this.input).toPromise();
-            switch (state.type) {
-                case 'result':
-                    this.results[i] = state.result; break;
-                case 'error':
-                    this.results[i] = 'error'; break;
-            }
-        }
-        this.isBusy = false;
+        this.results = [{}, {}];
+        this.workerService.solve(this.solutionInfo.day, this.input).subscribe({
+            next: state => {
+                const result = this.results[state.part - 1];
+                switch (state.type) {
+                    case 'result':
+                        result.value = state.result;
+                        result.time = state.timeMs;
+                        break;
+                    case 'error':
+                        result.value = 'error';
+                        result.time = state.timeMs;
+                        break;
+                    case 'progress':
+                        // TODO handle progress information
+                        break;
+                }
+            },
+            complete: () => { this.isBusy = false; }
+        });
     }
 
     private async loadInput() {

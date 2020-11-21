@@ -1,10 +1,6 @@
-import Debug from 'debug';
 import { solutionManager } from '../core/solutionManager';
+import { SolutionError, SolutionResult } from '../core/solutionProgress';
 import FileInputManager from './fileInputManager';
-
-const debug = Debug('aoc2020:console');
-
-debug('Console runner working!');
 
 async function app() {
     try {
@@ -15,13 +11,21 @@ async function app() {
             let input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
 
-            const result1 = await solution.part1Async();
-            debug(`Result1: ${result1}`);
-            const result2 = await solution.part2Async();
-            debug(`Result2: ${result2}`);
+            console.log(`Day ${solutionInfo.day} - ${solutionInfo.title}`);
+            for (let part of [1, 2]) {
+                const state = <SolutionResult | SolutionError>(await solution.solveWithProgressAsync(part).toPromise());
+                let result = '';
+                switch (state.type) {
+                    case 'result': result = state.result; break;
+                    case 'error': result = 'Error - ' + state.message; break;
+                }
+
+                console.log(`Part ${part} (${state.timeMs} ms): ${result}`);
+            }
+            console.log();
         }
     } catch (e) {
-        debug(`Error: ${e}`);
+        console.log(`Error: ${e}`);
     }
 }
 

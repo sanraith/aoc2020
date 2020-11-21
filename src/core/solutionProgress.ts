@@ -1,19 +1,29 @@
-export type SolutionState = SolutionResult | SolutionError;
+export type SolutionState = SolutionResult | SolutionError | SolutionProgress;
 
-export class SolutionResult {
-    type: 'result' = 'result';
-    result: string;
+abstract class SolutionStateBase {
+    type = 'none';
+    constructor(public part: number) { }
+}
 
-    constructor(result: string) {
-        this.result = result;
+export class SolutionProgress extends SolutionStateBase {
+    type: 'progress';
+    constructor(part: number, public percentage: number) {
+        super(part);
     }
 }
 
-export class SolutionError {
-    type: 'error' = 'error';
-    message: string;
+export class SolutionResult extends SolutionStateBase {
+    type: 'result' = 'result';
 
-    constructor(message: string) {
-        this.message = message;
+    constructor(part: number, public result: string, public timeMs: number) {
+        super(part);
+    }
+}
+
+export class SolutionError extends SolutionStateBase {
+    type: 'error' = 'error';
+
+    constructor(part: number, public message: string, public timeMs: number = 0) {
+        super(part);
     }
 }

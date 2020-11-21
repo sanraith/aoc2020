@@ -16,6 +16,8 @@ export class Day01 extends SolutionBase {
     }
 
     protected part2(): string {
+        for (let i = 0; i < 5e8; i++) { ; } // Simulate arbitrary work
+
         return _(this.inputLines)
             .map(parseInt)
             .reduce((sum, fuel) => {

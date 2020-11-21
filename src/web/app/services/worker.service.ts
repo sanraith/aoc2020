@@ -27,18 +27,19 @@ export class WorkerService {
         });
     }
 
-    solve(day: number, part: number, input: string): Observable<SolutionState> {
+    solve(day: number, input: string): Observable<SolutionState> {
         return new Observable(subscriber => {
             this.getAvailableWorker().then(workerInfo => {
                 const worker = workerInfo.worker;
                 worker.onmessage = ({ data }: { data: SolutionState }) => {
-                    subscriber.next(<SolutionState>data);
-                    if (data.type === 'result' || data.type === 'error') {
+                    if (data.part > 0) {
+                        subscriber.next(data);
+                    } else {
                         this.makeWorkerAvailable(workerInfo);
                         subscriber.complete();
                     }
                 };
-                worker.postMessage(<SolveRequest>{ day, part, input });
+                worker.postMessage(<SolveRequest>{ day, input });
             });
         });
     }
