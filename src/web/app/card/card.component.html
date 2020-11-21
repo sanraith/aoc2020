@@ -7,13 +7,19 @@
                 <button (click)="solve()" [disabled]="isBusy">Solve</button>
             </aside>
             <div>
-                <p *ngFor="let result of results; let i = index">
-                    Part {{i + 1}}:
-                    <span class="solutionResult">{{result.value}}</span>
-                    <span class="solutionTime unselectable" *ngIf="result.time !== undefined">
-                        ({{result.time}} ms)
-                    </span>
-                </p>
+                <table class="solutionTable">
+                    <tr *ngFor="let result of results; let i = index">
+                        <td>Part {{i + 1}}:</td>
+                        <td>
+                            <pre class="solutionResult">{{result.value}}</pre>
+                        </td>
+                        <td class="solutionTime">
+                            <span class="unselectable" *ngIf="result.time !== undefined">
+                                ({{result.time}} ms)
+                            </span>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

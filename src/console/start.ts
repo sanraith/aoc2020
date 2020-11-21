@@ -19,7 +19,9 @@ async function app() {
                     case 'result': result = state.result; break;
                     case 'error': result = 'Error - ' + state.message; break;
                 }
-
+                if (/\r\n?|\n/g.test(result)) {
+                    result = '\n' + result; // Start multiline results on the next line
+                }
                 console.log(`Part ${part} (${state.timeMs} ms): ${result}`);
             }
             console.log();

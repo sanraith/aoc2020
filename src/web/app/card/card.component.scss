@@ -4,10 +4,10 @@ article {
     margin-top: 1rem;
     background-color: $light-bgcolor;
     padding: 1rem;
-}
 
-article p {
-    margin: 0;
+    p {
+        margin: 0;
+    }
 }
 
 .title {
@@ -30,13 +30,29 @@ article p {
 }
 
 .solutionResult {
-    font-weight: 500; // TODO switch font instead
+    margin: 0;
+    margin-left: 0.75rem;
+    font-family: "Roboto Mono", monospace;
 }
 
 .solutionTime {
-    display: inline-block;
-    margin-left: 0.5rem;
-    font-size: small;
+    text-align: right;
+
+    span {
+        margin-left: 0.75rem;
+        font-size: small;
+    }
+}
+
+.solutionTable {
+    font-family: "Roboto Mono", monospace;
+
+    td {
+        vertical-align: top;
+    }
+    td:first-child {
+        padding-left: 0;
+    }
 }
 
 .solveButtonColumn {
@@ -44,11 +60,11 @@ article p {
     min-width: 4rem;
     float: right;
     overflow: auto;
-}
 
-.solveButtonColumn button {
-    width: 100%;
-    height: 2.5rem;
+    button {
+        width: 100%;
+        height: 2.5rem;
+    }
 }
 
 .footer {
