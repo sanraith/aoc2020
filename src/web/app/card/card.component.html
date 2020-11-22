@@ -16,12 +16,21 @@
             <table class="solutionTable">
                 <tr *ngFor="let result of results; let i = index">
                     <td>Part {{i + 1}}:</td>
-                    <td>
+                    <td *ngIf="result.value !== undefined">
                         <pre class="solutionResult">{{result.value}}</pre>
                     </td>
-                    <td class="solutionTime">
-                        <span class="unselectable" *ngIf="result.time !== undefined">
-                            ({{result.time}} ms)
+                    <td *ngIf="result.value === undefined" class="meterTd">
+                        <div *ngIf="result.onGoing && !result.percentage" class="meter animate blue">
+                            <span style="width: 100%;"></span>
+                        </div>
+                        <div *ngIf="result.onGoing && result.percentage && result.percentage >= 1"
+                            class="meter animate">
+                            <span [style.width.%]="result.percentage"></span>
+                        </div>
+                    </td>
+                    <td class="solutionTime" style="min-width: 6rem;">
+                        <span class="unselectable">
+                            ({{result.time === undefined ? '???' : result.time}}{{result.onGoing ? '+' : ''}} ms)
                         </span>
                     </td>
                 </tr>

@@ -14,7 +14,9 @@ export class CardComponent implements OnInit {
     input = '';
     results: {
         value?: string,
-        time?: number
+        time?: number,
+        onGoing?: boolean,
+        percentage?: number
     }[] = [{}, {}];
     isBusy: boolean;
     isInputFieldVisible: boolean;
@@ -35,22 +37,27 @@ export class CardComponent implements OnInit {
 
     async solve() {
         this.isBusy = true;
-        this.results = [{}, {}];
+        this.results = [{ onGoing: true }, {}];
         this.workerService.solve(this.solutionInfo.day, this.input).subscribe({
             next: state => {
                 const result = this.results[state.part - 1];
+                result.onGoing = true;
                 switch (state.type) {
                     case 'result':
                         result.value = state.result;
-                        result.time = state.timeMs;
                         break;
                     case 'error':
                         result.value = 'error';
-                        result.time = state.timeMs;
                         break;
                     case 'progress':
-                        // TODO handle progress information
+                        result.percentage = state.percentage * 100;
+                        result.time = state.timeMs;
                         break;
+                }
+                if (state.type === 'result' || state.type === 'error') {
+                    result.time = state.timeMs;
+                    result.onGoing = false;
+                    if (this.results[state.part]) { this.results[state.part].onGoing = true; }
                 }
             },
             complete: () => { this.isBusy = false; }

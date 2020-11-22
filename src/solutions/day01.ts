@@ -16,7 +16,12 @@ export class Day01 extends SolutionBase {
     }
 
     protected part2(): string {
-        for (let i = 0; i < 5e8; i++) { ; } // Simulate arbitrary work
+        // Simulate arbitrary work
+        const max = 21;
+        for (let j = 0; j < max; j++) {
+            this.updateProgress(j / max);
+            for (let i = 0; i < 1e8; i++) { ; }
+        }
 
         return _(this.inputLines)
             .map(parseInt)

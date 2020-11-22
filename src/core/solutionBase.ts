@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Subscriber } from 'rxjs/internal/Subscriber';
-import { SolutionError, SolutionResult, SolutionState } from './solutionProgress';
+import { SolutionError, SolutionProgress, SolutionResult, SolutionState } from './solutionProgress';
 import { Stopwatch } from 'ts-stopwatch';
 
 /**
@@ -8,10 +8,17 @@ import { Stopwatch } from 'ts-stopwatch';
  * Part 1 and Part 2 can only be called in sequential order.
  */
 export default abstract class SolutionBase {
+    minTimeBetweenUpdatesMs = 20;
+
     protected inputLines: string[];
     protected state = { percentage: 0 };
 
-    private subscriber?: Subscriber<SolutionState> = null;
+    private currentSolution: {
+        subscriber: Subscriber<SolutionState>,
+        activePart: number,
+        progressStopwatch: Stopwatch,
+        stopwatch: Stopwatch
+    };
 
     init(input: string): SolutionBase {
         this.inputLines = this.parseInputLines(input);
@@ -34,16 +41,22 @@ export default abstract class SolutionBase {
                     subscriber.error(new SolutionError(part, 'No input provided!'));
                     return;
                 }
-                if (this.subscriber) {
+                if (this.currentSolution) {
                     subscriber.error(new SolutionError(part, 'Another solution is already in progress!'));
                     return;
                 }
                 const partFunction = part === 1 ? this.part1 : this.part2;
-                this.subscriber = subscriber;
+                this.currentSolution = {
+                    activePart: part,
+                    subscriber: subscriber,
+                    stopwatch: new Stopwatch(),
+                    progressStopwatch: new Stopwatch()
+                };
+                this.currentSolution.progressStopwatch.start();
 
-                stopwatch.start();
+                this.currentSolution.stopwatch.start();
                 const result = partFunction.apply(this);
-                const timeMs = stopwatch.stop();
+                const timeMs = this.currentSolution.stopwatch.stop();
 
                 subscriber.next(new SolutionResult(part, result, timeMs));
             } catch (exception) {
@@ -51,7 +64,7 @@ export default abstract class SolutionBase {
                 subscriber.next(new SolutionError(part, exception, timeMs));
             } finally {
                 subscriber.complete();
-                this.subscriber = null;
+                this.currentSolution = null;
             }
         });
     }
@@ -59,6 +72,14 @@ export default abstract class SolutionBase {
     protected abstract part1(): string;
 
     protected abstract part2(): string;
+
+    protected updateProgress(percentage: number) {
+        const current = this.currentSolution;
+        if (current.progressStopwatch.getTime() > this.minTimeBetweenUpdatesMs) {
+            current.subscriber.next(new SolutionProgress(current.activePart, percentage, current.stopwatch.getTime()));
+            current.progressStopwatch.start(true);
+        }
+    }
 
     private async getResultAsync(partObservable: Observable<SolutionState>): Promise<string | undefined> {
         const state = await partObservable.toPromise();
