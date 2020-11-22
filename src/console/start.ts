@@ -5,7 +5,7 @@ import FileInputManager from './fileInputManager';
 let lastConsoleLineLength = 0;
 
 function consoleRewrite(message: string, newLine: boolean = false) {
-    process.stdout.write(''.padStart(lastConsoleLineLength, ' ') + '\r');
+    process.stdout.write('\r'.padEnd(lastConsoleLineLength, ' '));
     lastConsoleLineLength = message.length;
     process.stdout.write('\r' + message + (newLine ? '\n' : ''));
 }

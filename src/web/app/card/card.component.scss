@@ -35,6 +35,10 @@ article {
     font-family: "Roboto Mono", monospace;
 }
 
+.resultColumn {
+    min-width: 150px;
+}
+
 .solutionTime {
     text-align: right;
 
@@ -107,11 +111,6 @@ $borderRadius: 0px;
     padding: 0px;
     box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
     width: 100%;
-    min-width: 150px;
-}
-
-.meterTd {
-    padding-right: 0.75rem;
 }
 
 .meter > span {

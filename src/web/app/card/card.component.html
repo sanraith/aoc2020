@@ -16,10 +16,10 @@
             <table class="solutionTable">
                 <tr *ngFor="let result of results; let i = index">
                     <td>Part {{i + 1}}:</td>
-                    <td *ngIf="result.value !== undefined">
+                    <td *ngIf="result.value !== undefined" class="resultColumn">
                         <pre class="solutionResult">{{result.value}}</pre>
                     </td>
-                    <td *ngIf="result.value === undefined" class="meterTd">
+                    <td *ngIf="result.value === undefined" class="resultColumn">
                         <div *ngIf="result.onGoing && !result.percentage" class="meter animate blue">
                             <span style="width: 100%;"></span>
                         </div>
