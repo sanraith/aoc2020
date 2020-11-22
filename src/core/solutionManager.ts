@@ -1,6 +1,5 @@
 import { rawSolutionList, SolutionInfo } from './solutionInfo';
-import * as allSolutions from '../solutions';
-const _ = allSolutions; // Fake usage to prevent optimizers omitting solution files
+import '../solutions';
 
 class SolutionManager {
     /** Get the solutions in a (day, solutionInfo) map. */

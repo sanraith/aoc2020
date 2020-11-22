@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Stopwatch } from 'ts-stopwatch';
 import { SolutionInfo } from '../../../core/solutionInfo';
 import { SolutionError, SolutionResult } from '../../../core/solutionProgress';
@@ -30,7 +31,7 @@ export class CardComponent implements OnInit {
     get twoLetterDay(): string { return this.solutionInfo.day.toString().padStart(2, '0'); }
     get hasOngoingSolution(): boolean { return this.results.some(x => x.onGoing); }
 
-    private cancelSolutionWorker: (() => void);
+    private solutionSubscription: Subscription;
 
     constructor(
         private workerService: WorkerService,
@@ -40,19 +41,16 @@ export class CardComponent implements OnInit {
         this.loadInput();
     }
 
-    toggleInput() {
+    toggleInput(): void {
         this.isInputFieldVisible = !this.isInputFieldVisible;
     }
 
-    async solve() {
+    async solve(): Promise<void> {
         this.isBusy = true;
         this.results = [{}, {}];
-
-        const { observable, cancel } = this.workerService.solve(this.solutionInfo.day, this.input);
-        this.cancelSolutionWorker = cancel;
         this.endPartAndStartNextPart();
 
-        observable.subscribe({
+        this.solutionSubscription = this.workerService.solveAsync(this.solutionInfo.day, this.input).subscribe({
             next: state => {
                 const result = this.results[state.part - 1];
                 result.onGoing = true;
@@ -71,23 +69,24 @@ export class CardComponent implements OnInit {
                     this.endPartAndStartNextPart(state);
                 }
             },
-            complete: () => {
-                this.isBusy = false;
-                this.cancelSolutionWorker = null;
-            }
+            complete: () => this.solveCompleted()
         });
     }
 
-    cancel() {
-        if (!this.cancelSolutionWorker) {
-            return;
-        }
-        this.cancelSolutionWorker();
+    cancel(): void {
+        if (!this.solutionSubscription) { return; }
+        this.solutionSubscription.unsubscribe();
         this.results.filter(x => x.value === undefined).forEach(x => x.value = 'Canceled.');
         this.endPart(this.results.find(x => x.onGoing));
+        this.solveCompleted();
     }
 
-    private endPartAndStartNextPart(state: SolutionResult | SolutionError = undefined) {
+    private solveCompleted(): void {
+        this.isBusy = false;
+        this.solutionSubscription = null;
+    }
+
+    private endPartAndStartNextPart(state: SolutionResult | SolutionError = undefined): void {
         const currentPart = state ? state.part : 0;
 
         // End current part
@@ -107,20 +106,20 @@ export class CardComponent implements OnInit {
         }
     }
 
-    private endPart(result: Result) {
+    private endPart(result: Result): void {
         result.onGoing = false;
         result.stopwatch?.stop();
         clearTimeout(result.updateTimeout);
     }
 
-    private updateResultTime(result: Result) {
+    private updateResultTime(result: Result): void {
         if (result.onGoing) {
             result.time = result.stopwatch.getTime();
             result.updateTimeout = setTimeout(() => this.updateResultTime(result), 50);
         }
     }
 
-    private async loadInput() {
+    private async loadInput(): Promise<void> {
         this.isBusy = true;
         this.input = await this.inputService.getInput(this.solutionInfo.day);
         this.isBusy = false;

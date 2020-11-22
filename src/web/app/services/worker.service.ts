@@ -28,13 +28,13 @@ export class WorkerService {
         });
     }
 
-    solve(day: number, input: string): { observable: Observable<SolutionState>, cancel: (() => void) } {
+    solveAsync(day: number, input: string): Observable<SolutionState> {
         const queuedWork: QueuedWork = { isTerminated: false };
 
-        const observable = new Observable<SolutionState>(subscriber => {
+        return new Observable<SolutionState>(subscriber => {
             queuedWork.subscriber = subscriber;
 
-            this.getAvailableWorker().then(workerInfo => {
+            this.getAvailableWorkerAsync().then(workerInfo => {
                 if (queuedWork.isTerminated) { return; }
                 queuedWork.workerInfo = workerInfo;
                 const worker = workerInfo.worker;
@@ -50,12 +50,12 @@ export class WorkerService {
 
                 worker.postMessage(<SolveRequest>{ day, input });
             });
-        });
 
-        return { observable, cancel: () => this.cancel(queuedWork) };
+            return () => this.cancel(queuedWork);
+        });
     }
 
-    private cancel(queuedWork: QueuedWork) {
+    private cancel(queuedWork: QueuedWork): void {
         queuedWork.isTerminated = true;
         const { workerInfo, subscriber } = queuedWork;
         if (workerInfo) {
@@ -68,12 +68,12 @@ export class WorkerService {
         }
     }
 
-    private makeWorkerAvailable(workerInfo: WorkerInfo) {
+    private makeWorkerAvailable(workerInfo: WorkerInfo): void {
         workerInfo.isAvailable = true;
         this._onWorkerAvailable.dispatch(this, workerInfo);
     }
 
-    private getAvailableWorker(): Promise<WorkerInfo> {
+    private getAvailableWorkerAsync(): Promise<WorkerInfo> {
         return new Promise((resolve, _) => {
             // Try to find an available worker
             let workerInfo = this.workerList.find(x => x.isAvailable);
