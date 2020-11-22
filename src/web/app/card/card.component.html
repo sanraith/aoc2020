@@ -2,7 +2,9 @@
     <aside class="bigNumber">{{twoLetterDay}}</aside>
     <div>
         <aside class="solveButtonColumn">
-            <button (click)="solve()" [disabled]="isBusy">Solve</button>
+            <button *ngIf="isBusy && hasOngoingSolution" (click)="cancel()">Cancel</button>
+            <button *ngIf="!(isBusy && hasOngoingSolution)" #solveButton (click)="solve()"
+                [disabled]="isBusy">Solve</button>
             <div class="footer">
                 <a (click)="toggleInput()" nohref>Input</a>
                 <a [href]="'https://github.com/sanraith/aoc2020/blob/main/src/solutions/day'+twoLetterDay+'.ts'"
@@ -20,7 +22,7 @@
                         <pre class="solutionResult">{{result.value}}</pre>
                     </td>
                     <td *ngIf="result.value === undefined" class="resultColumn">
-                        <div *ngIf="result.onGoing && !result.percentage" class="meter animate blue">
+                        <div *ngIf="result.onGoing && !result.percentage" class="meter animate black">
                             <span style="width: 100%;"></span>
                         </div>
                         <div *ngIf="result.onGoing && result.percentage && result.percentage >= 1"
@@ -29,8 +31,8 @@
                         </div>
                     </td>
                     <td class="solutionTime" style="min-width: 6rem;">
-                        <span class="unselectable">
-                            ({{result.time === undefined ? '???' : result.time}}{{result.onGoing ? '+' : ''}} ms)
+                        <span class="unselectable" *ngIf="result.time !== undefined">
+                            ({{result.time}} ms)
                         </span>
                     </td>
                 </tr>

@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 export class Day01 extends SolutionBase {
 
     protected part1(): string {
+        for (let i = 0; i < 9e8; i++) { ; } // Simulate arbitrary work
         return _(this.inputLines)
             .map(x => Math.floor(parseInt(x) / 3) - 2)
             .reduce((a, x) => a + x)

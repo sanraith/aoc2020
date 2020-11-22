@@ -1,7 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Stopwatch } from 'ts-stopwatch';
 import { SolutionInfo } from '../../../core/solutionInfo';
+import { SolutionError, SolutionResult } from '../../../core/solutionProgress';
 import { InputService } from '../services/input.service';
 import { WorkerService } from '../services/worker.service';
+
+type Result = {
+    value?: string,
+    time?: number,
+    onGoing?: boolean,
+    percentage?: number,
+    stopwatch?: Stopwatch,
+    updateTimeout?: NodeJS.Timeout
+};
 
 @Component({
     selector: 'app-card',
@@ -12,16 +23,14 @@ export class CardComponent implements OnInit {
     @Input() solutionInfo: SolutionInfo;
 
     input = '';
-    results: {
-        value?: string,
-        time?: number,
-        onGoing?: boolean,
-        percentage?: number
-    }[] = [{}, {}];
+    results: Result[] = [{}, {}];
     isBusy: boolean;
     isInputFieldVisible: boolean;
 
     get twoLetterDay(): string { return this.solutionInfo.day.toString().padStart(2, '0'); }
+    get hasOngoingSolution(): boolean { return this.results.some(x => x.onGoing); }
+
+    private cancelSolutionWorker: (() => void);
 
     constructor(
         private workerService: WorkerService,
@@ -37,8 +46,13 @@ export class CardComponent implements OnInit {
 
     async solve() {
         this.isBusy = true;
-        this.results = [{ onGoing: true }, {}];
-        this.workerService.solve(this.solutionInfo.day, this.input).subscribe({
+        this.results = [{}, {}];
+
+        const { observable, cancel } = this.workerService.solve(this.solutionInfo.day, this.input);
+        this.cancelSolutionWorker = cancel;
+        this.endPartAndStartNextPart();
+
+        observable.subscribe({
             next: state => {
                 const result = this.results[state.part - 1];
                 result.onGoing = true;
@@ -51,17 +65,59 @@ export class CardComponent implements OnInit {
                         break;
                     case 'progress':
                         result.percentage = state.percentage * 100;
-                        result.time = state.timeMs;
                         break;
                 }
                 if (state.type === 'result' || state.type === 'error') {
-                    result.time = state.timeMs;
-                    result.onGoing = false;
-                    if (this.results[state.part]) { this.results[state.part].onGoing = true; }
+                    this.endPartAndStartNextPart(state);
                 }
             },
-            complete: () => { this.isBusy = false; }
+            complete: () => {
+                this.isBusy = false;
+                this.cancelSolutionWorker = null;
+            }
         });
+    }
+
+    cancel() {
+        if (!this.cancelSolutionWorker) {
+            return;
+        }
+        this.cancelSolutionWorker();
+        this.results.filter(x => x.value === undefined).forEach(x => x.value = 'Canceled.');
+        this.endPart(this.results.find(x => x.onGoing));
+    }
+
+    private endPartAndStartNextPart(state: SolutionResult | SolutionError = undefined) {
+        const currentPart = state ? state.part : 0;
+
+        // End current part
+        if (currentPart > 0) {
+            const currentResult = this.results[currentPart - 1];
+            this.endPart(currentResult);
+            currentResult.time = state.timeMs;
+        }
+
+        // Start next part
+        if (currentPart < 2) {
+            const result = this.results[currentPart];
+            result.onGoing = true;
+            result.stopwatch = new Stopwatch();
+            result.stopwatch.start();
+            this.updateResultTime(result);
+        }
+    }
+
+    private endPart(result: Result) {
+        result.onGoing = false;
+        result.stopwatch?.stop();
+        clearTimeout(result.updateTimeout);
+    }
+
+    private updateResultTime(result: Result) {
+        if (result.onGoing) {
+            result.time = result.stopwatch.getTime();
+            result.updateTimeout = setTimeout(() => this.updateResultTime(result), 50);
+        }
     }
 
     private async loadInput() {

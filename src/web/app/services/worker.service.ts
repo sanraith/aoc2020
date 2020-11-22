@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { SolutionState } from '../../../core/solutionProgress';
 import { SolveRequest } from './solveRequest';
 import { EventDispatcher, IEventManagement } from 'strongly-typed-events';
 
 type WorkerInfo = { isAvailable: boolean, worker: Worker };
+type QueuedWork = { subscriber?: Subscriber<SolutionState>, workerInfo?: WorkerInfo, isTerminated: boolean };
 
 @Injectable({
     providedIn: 'root'
@@ -27,10 +28,17 @@ export class WorkerService {
         });
     }
 
-    solve(day: number, input: string): Observable<SolutionState> {
-        return new Observable(subscriber => {
+    solve(day: number, input: string): { observable: Observable<SolutionState>, cancel: (() => void) } {
+        const queuedWork: QueuedWork = { isTerminated: false };
+
+        const observable = new Observable<SolutionState>(subscriber => {
+            queuedWork.subscriber = subscriber;
+
             this.getAvailableWorker().then(workerInfo => {
+                if (queuedWork.isTerminated) { return; }
+                queuedWork.workerInfo = workerInfo;
                 const worker = workerInfo.worker;
+
                 worker.onmessage = ({ data }: { data: SolutionState }) => {
                     if (data.part > 0) {
                         subscriber.next(data);
@@ -39,9 +47,25 @@ export class WorkerService {
                         subscriber.complete();
                     }
                 };
+
                 worker.postMessage(<SolveRequest>{ day, input });
             });
         });
+
+        return { observable, cancel: () => this.cancel(queuedWork) };
+    }
+
+    private cancel(queuedWork: QueuedWork) {
+        queuedWork.isTerminated = true;
+        const { workerInfo, subscriber } = queuedWork;
+        if (workerInfo) {
+            workerInfo.worker.terminate();
+            workerInfo.worker = this.createWorker();
+            this.makeWorkerAvailable(workerInfo);
+        }
+        if (subscriber) {
+            subscriber.complete();
+        }
     }
 
     private makeWorkerAvailable(workerInfo: WorkerInfo) {
