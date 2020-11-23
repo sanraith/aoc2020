@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import * as cheerio from 'cheerio';
 import { runChildProcessAsync } from './helpers';
+import { ArgumentParser } from 'argparse';
 const fsAsync = fs.promises;
 
 const inputPath = './src/web/assets/input/';
@@ -102,11 +103,10 @@ function fillTemplate(template: string, dayNumber: number, twoDigitDayNumber: st
         .replace(templateRegex__TITLE__, title);
 }
 
-async function createNewSolutionFilesAsync(dayNumber?: number) {
-    console.log(`Scaffolding day ${dayNumber}.`);
-
-    const year = 2019;
+async function createNewSolutionFilesAsync(dayNumber?: number, year: number = 2020) {
     dayNumber = dayNumber ?? await getNextSolutionIndex();
+
+    console.log(`Scaffolding day ${dayNumber}.`);
     const twoDigitDayNumber = dayNumber.toString().padStart(2, '0');
     const newSourcePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
     const newInputPath = `${inputPath}day${twoDigitDayNumber}.txt`;
@@ -135,6 +135,28 @@ async function createNewSolutionFilesAsync(dayNumber?: number) {
     console.log('Done.');
 }
 
-const parameters = process.argv.slice(2);
-const dayNumber = parameters[0] === undefined ? undefined : parseInt(parameters[0]);
-createNewSolutionFilesAsync(dayNumber);
+async function parseArgs() {
+    const parser = new ArgumentParser({
+        description: 'Scaffold solutions',
+        add_help: true,
+    });
+
+    parser.add_argument('-y', '--year',
+        { help: 'Puzzle year. Used for picking puzzles from adventofcode.com. Default: 2020.', default: 2020, type: 'int' });
+    parser.add_argument('days', { help: 'Scaffold a single day or multiple days.', metavar: 'days', type: 'int', nargs: '+' });
+    const args = parser.parse_args();
+
+    let days: number[] = [undefined];
+    if (args.days) {
+        days = args.days;
+        console.log(`Scaffolding solutions for day(s): ${days.join(', ')}`);
+    } else {
+        console.log('Scaffolding solution for first unavailable day.');
+    }
+
+    for (let day of days) {
+        await createNewSolutionFilesAsync(day, args.year);
+    }
+}
+
+parseArgs();

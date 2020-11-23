@@ -1,6 +1,7 @@
 import { solutionManager } from '../core/solutionManager';
 import { SolutionError, SolutionResult } from '../core/solutionProgress';
 import FileInputManager from './fileInputManager';
+import { ArgumentParser } from 'argparse';
 
 let lastConsoleLineLength = 0;
 
@@ -14,11 +15,12 @@ function consoleRewriteLine(message: string) {
     consoleRewrite(message, true);
 }
 
-async function app() {
+async function app(days: number[]) {
     try {
         const inputManager = new FileInputManager();
 
-        for (const solutionInfo of solutionManager.getSolutions()) {
+        for (let day of days) {
+            const solutionInfo = solutionManager.getSolutionsByDay().get(day);
             const solution = solutionInfo.create();
             let input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
@@ -53,4 +55,30 @@ async function app() {
     }
 }
 
-app();
+async function parseArgs() {
+    const parser = new ArgumentParser({
+        description: 'Advent of Code 2020 solutions in Typescript',
+        add_help: true,
+    });
+
+    parser.add_argument('-d', '--days', { help: 'Solve a single day or multiple days.', type: 'int', nargs: '+' });
+    parser.add_argument('-a', '--all', { help: 'Solve all days.', action: 'store_true' });
+    parser.add_argument('-l', '--last', { help: 'Solve the last available day.', action: 'store_true' });
+
+    const args = parser.parse_args();
+    let days: number[] = [];
+
+    if (args.days) {
+        days = args.days;
+        console.log(`Running solutions for day(s): ${days.join(', ')}`);
+    } else if (args.last) {
+        days = [Array.from(solutionManager.getSolutionsByDay().keys()).sort().reverse()[0]];
+        console.log(`Running last available day: ${days[0]}`);
+    } else {
+        console.log('Running all available solutions.');
+        days = Array.from(solutionManager.getSolutionsByDay().keys()).sort();
+    }
+    await app(days);
+}
+
+parseArgs();

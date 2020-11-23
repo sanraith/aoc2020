@@ -13,7 +13,10 @@
     ],
     "cSpell.words": [
         "Scroller",
+        "argparse",
+        "nargs",
         "preconnect",
+        "sanraith",
         "ttsc",
         "ttypescript",
         "unselectable",

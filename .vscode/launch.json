@@ -9,7 +9,9 @@
             "request": "launch",
             "runtimeArgs": [
                 "run-script",
-                "console_single"
+                "start",
+                "--",
+                "--last"
             ],
             "runtimeExecutable": "npm",
             "skipFiles": [
