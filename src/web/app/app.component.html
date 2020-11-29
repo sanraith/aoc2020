@@ -13,10 +13,29 @@
     </div>
 </div>
 
-<h2>Test solutions from 2019</h2>
+<h2>About</h2>
+<p>
+    This page collects my solutions for the
+    <a href="https://adventofcode.com/2020" target="_blank">Advent of Code 2020</a>
+    calendar. The solutions are written in Typescript, and you can try them out using the cards below.
+    Check out the source code on my <a href="https://github.com/sanraith/aoc2020">GitHub</a>, or by clicking
+    <span class="reference">
+        Source<img src="assets/external-link-symbol.png" style="margin-left: 0.25em; width: 0.8em;" />
+    </span>. You can also read the original
+    <span class="reference">
+        Puzzle<img src="assets/external-link-symbol.png" style="margin-left: 0.25em; width: 0.8em;" />
+    </span>
+    description or change the default <span class="reference">Input</span>.
+</p>
+
+<h2>Solutions</h2>
 
 <div *ngFor="let solutionInfo of solutionInfos">
     <app-card [solutionInfo]='solutionInfo'></app-card>
 </div>
+
+<p *ngIf="solutionInfos.length === 0">
+    No solutions are available yet.
+</p>
 
 <router-outlet></router-outlet>

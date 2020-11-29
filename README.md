@@ -36,3 +36,7 @@ Run `npm run scaffold -- --help` to display all available options.
 
 Update the `baseHref` variable in `util/deploy.ts` for your own deploy target.  
 Run `npm run deploy`. The webpage will be deployed to `docs/`.
+
+## Attributions
+
+Icons made by [Dave Gandy](https://www.flaticon.com/authors/dave-gandy) from [www.flaticon.com](https://www.flaticon.com/).

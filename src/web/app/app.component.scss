@@ -6,6 +6,17 @@ h1 {
     font-family: "Merienda One", cursive;
 }
 
+a {
+    cursor: pointer;
+    text-decoration: underline;
+    color: $dark-fgcolor;
+}
+
+.reference {
+    font-style: italic;
+    font-weight: 500;
+}
+
 // Calendar
 
 $_calendarWidth: 0.5; // Relative size of the calendar to its container
