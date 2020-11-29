@@ -11,7 +11,6 @@ export default abstract class SolutionBase {
     minTimeBetweenUpdatesMs = 20;
 
     protected inputLines: string[];
-    protected state = { percentage: 0 };
 
     private currentSolution: {
         subscriber: Subscriber<SolutionState>,
