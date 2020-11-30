@@ -78,6 +78,12 @@ async function parseArgs() {
         console.log('Running all available solutions.');
         days = Array.from(solutionManager.getSolutionsByDay().keys()).sort();
     }
+
+    if (!days || days.length === 0 || days.some(x => x === undefined)) {
+        console.log('No solutions are available.');
+        return;
+    }
+
     await app(days);
 }
 
