@@ -7,7 +7,7 @@ Includes an angular solution runner available at: [sanraith.github.io/aoc2020](h
 
 ## Local repository setup
 
-Run `git clone https://github.com/sanraith/aopc2020` to clone the repository.  
+Run `git clone https://github.com/sanraith/aoc2020` to clone the repository.  
 Run `npm install` to download dependencies.
 
 ## Running solutions
