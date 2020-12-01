@@ -141,9 +141,14 @@ async function parseArgs() {
         add_help: true,
     });
 
-    parser.add_argument('-y', '--year',
-        { help: 'Puzzle year. Used for picking puzzles from adventofcode.com. Default: 2020.', default: 2020, type: 'int' });
-    parser.add_argument('days', { help: 'Scaffold a single day or multiple days.', metavar: 'days', type: 'int', nargs: '+' });
+    parser.add_argument('-y', '--year', {
+        help: 'Puzzle year. Used for picking puzzles from adventofcode.com. Default: 2020.',
+        default: 2020, type: 'int'
+    });
+    parser.add_argument('days', {
+        help: 'Scaffold a single day or multiple days.',
+        metavar: 'days', default: undefined, type: 'int', nargs: '+'
+    });
     const args = parser.parse_args();
 
     let days: number[] = [undefined];
