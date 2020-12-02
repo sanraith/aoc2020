@@ -21,7 +21,8 @@
         "ttsc",
         "ttypescript",
         "unselectable",
-        "unsub"
+        "unsub",
+        "xdescribe"
     ],
     "files.exclude": {
         "**/.git": true,

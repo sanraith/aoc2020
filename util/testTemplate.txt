@@ -1,16 +1,17 @@
 import { Day__DAY_TWO_LETTER_NUMBER__ } from '../../src/solutions';
+import { expectedResult, setupSolution } from './testHelper';
 
 describe('Day__DAY_TWO_LETTER_NUMBER__ solution', function () {
-    describe('for input 1', function () {
-        const input = ``;
-        const solution = new Day__DAY_TWO_LETTER_NUMBER__().init(input);
+    describe('for test input', function () {
+        beforeAll(setupSolution(Day__DAY_TWO_LETTER_NUMBER__, ``));
 
-        it('solves part 1', async function () {
-            expect(await solution.solveAsync(1)).toEqual('Day__DAY_TWO_LETTER_NUMBER__Part1');
-        });
+        it('solves part 1', expectedResult(1, 'Day__DAY_TWO_LETTER_NUMBER__Part1'));
+        it('solves part 2', expectedResult(2, 'Day__DAY_TWO_LETTER_NUMBER__Part2'));
+    });
 
-        it('solves part 2', async function () {
-            expect(await solution.solveAsync(2)).toEqual('Day__DAY_TWO_LETTER_NUMBER__Part2');
-        });
+    xdescribe('for puzzle input', function () {
+        beforeAll(setupSolution(Day__DAY_TWO_LETTER_NUMBER__));
+        it('solves part 1', expectedResult(1, 'Day__DAY_TWO_LETTER_NUMBER__Part2'));
+        it('solves part 2', expectedResult(2, 'Day__DAY_TWO_LETTER_NUMBER__Part2'));
     });
 });

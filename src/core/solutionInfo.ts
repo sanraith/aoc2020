@@ -1,14 +1,15 @@
 import SolutionBase from './solutionBase';
 
-type Constructor<T> = {
+const rawSolutionList: SolutionInfo[] = [];
+
+export type Constructor<T> = {
     new(...args: any[]): T;
     readonly prototype: T;
 }
 
-const rawSolutionList: SolutionInfo[] = [];
-
 export type SolutionInfo = SolutionInfoParams & {
     create: () => SolutionBase;
+    ctor: Constructor<SolutionBase>;
 }
 
 export type SolutionInfoParams = {
@@ -17,7 +18,7 @@ export type SolutionInfoParams = {
 }
 
 export function solutionInfo<TCtor extends Constructor<SolutionBase>>(info: SolutionInfoParams) {
-    return (ctor: TCtor) => { rawSolutionList.push({ create: () => new ctor(), ...info }); };
+    return (ctor: TCtor) => { rawSolutionList.push({ create: () => new ctor(), ctor: ctor, ...info }); };
 }
 
 export { rawSolutionList };
