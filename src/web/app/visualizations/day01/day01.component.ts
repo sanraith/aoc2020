@@ -12,7 +12,6 @@ import { VisualizationBaseComponent } from '../visualization.base.component';
 export class Day01Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
-    protected ctx: CanvasRenderingContext2D;
 
     constructor() {
         super();
@@ -33,8 +32,8 @@ class Day01Animation extends Animation {
     private day01Data: Day01Data[];
 
     constructor(width: number, height: number, ctx: CanvasRenderingContext2D, runtimeResults: RuntimeResult[]) {
-        super(width, height, ctx);
-        this.day01Data = runtimeResults.map(x => x.data.visualizationData as Day01Data);
+        super(width, height, ctx, runtimeResults);
+        this.day01Data = this.runtimeResults.map(x => x.data.visualizationData as Day01Data);
         this.init();
     }
 
@@ -107,9 +106,5 @@ class Day01Animation extends Animation {
         }
 
         return currentCheckIndex >= checksCount - 1;
-    }
-
-    private sinTransform(x: number) {
-        return Math.sin(x * Math.PI);
     }
 }

@@ -1,3 +1,5 @@
+import { RuntimeResult } from '../card/card.component';
+
 export type Rect = {
     x: number; y: number;
     width: number; height: number;
@@ -13,13 +15,14 @@ export type DrawableElement = {
     id?: string;
     isVisible?: boolean;
     rect?: Rect;
-    color: string,
+    rectSource?: Rect;
+    color: string;
     draw(element: DrawableElement, ctx: CanvasRenderingContext2D, time: number): void;
 }
 
 export class Animation {
-    constructor(public width: number, public height: number, private ctx: CanvasRenderingContext2D) {
-    }
+    constructor(public width: number, public height: number,
+        private ctx: CanvasRenderingContext2D, protected runtimeResults: RuntimeResult[]) { }
 
     protected animators: Animator[] = [];
     protected elements: DrawableElement[] = [];
@@ -28,6 +31,10 @@ export class Animation {
 
     protected normalize(value: number, valueMax: number, boundMax: number) {
         return (value / valueMax) * boundMax;
+    }
+
+    protected sinTransform(x: number) {
+        return Math.sin(x * Math.PI);
     }
 
     private animateLoop(time: number = undefined, start: number = undefined) {
@@ -39,9 +46,12 @@ export class Animation {
         const currentTime = time - start;
 
         this.ctx.clearRect(0, 0, this.width, this.height);
-        const areAnimatorsDone = this.animators
-            .filter(a => a.start === undefined || currentTime >= a.start)
-            .map(a => a.animate(a, currentTime - (a.start ?? 0)));
+        const areAnimatorsDone = this.animators.map(a => {
+            if (a.start === undefined || currentTime >= a.start) {
+                return a.animate(a, currentTime - (a.start ?? 0));
+            }
+            return false;
+        });
         this.animators = this.animators.filter((_, i) => !areAnimatorsDone[i]);
         this.elements
             .filter(e => e.isVisible === undefined || e.isVisible)

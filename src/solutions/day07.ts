@@ -2,10 +2,15 @@ import { regexGetAllResults } from '../core/helpers';
 import SolutionBase from '../core/solutionBase';
 import { solutionInfo } from '../core/solutionInfo';
 
-type Bag = {
+export type Bag = {
     type: string,
     parents: Bag[],
     children: { bag: Bag, count: number }[]
+}
+
+export type Day07Data = {
+    bags: Map<string, Bag>,
+    myBag: Bag
 }
 
 @solutionInfo({
@@ -16,7 +21,9 @@ export class Day07 extends SolutionBase {
 
     protected part1(): number {
         const bags = this.parseBags();
-        const parentCount = this.countAllParents(bags.get('shiny gold'));
+        const myBag = bags.get('shiny gold');
+        const parentCount = this.countAllParents(myBag);
+        this.visualizationData = <Day07Data>{ bags, myBag };
 
         return parentCount;
     }

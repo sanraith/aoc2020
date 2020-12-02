@@ -1,5 +1,6 @@
 import { Injectable, Type } from '@angular/core';
 import { Day01Component } from '../visualizations/day01/day01.component';
+import { Day07Component } from '../visualizations/day07/day07.component';
 import { VisualizationBaseComponent } from '../visualizations/visualization.base.component';
 
 @Injectable({
@@ -10,7 +11,8 @@ export class VisualizationService {
 
     constructor() {
         Array.from([
-            Day01Component
+            Day01Component,
+            Day07Component
         ]).forEach(x => this.visualizers.set(new x().day, x));
     }
 }

@@ -15,6 +15,7 @@
         "docs/**"
     ],
     "cSpell.words": [
+        "Drawables",
         "Scroller",
         "argparse",
         "metavar",

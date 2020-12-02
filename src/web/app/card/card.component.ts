@@ -79,6 +79,7 @@ export class CardComponent implements OnInit {
                 if (state.type === 'result' || state.type === 'error') {
                     this.endPartAndStartNextPart(state);
                 }
+                this.results = this.results.map(x => x); // force change detection
             },
             complete: () => this.solveCompleted()
         });

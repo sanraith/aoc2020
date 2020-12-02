@@ -14,6 +14,7 @@ export abstract class VisualizationBaseComponent {
     get results(): RuntimeResult[] { return this._results; };
     private _results: RuntimeResult[];
 
+    protected ctx: CanvasRenderingContext2D;
     protected abstract getAnimation(): Animation;
 
     constructor() { }

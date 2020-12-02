@@ -7,12 +7,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { CardComponent } from './card/card.component';
 import { Day01Component } from './visualizations/day01/day01.component';
 import { VisualizationContentDirective } from './visualizations/visContentDirective';
+import { Day07Component } from './visualizations/day07/day07.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         CardComponent,
-        VisualizationContentDirective
+        VisualizationContentDirective,
+        Day07Component
     ],
     imports: [
         BrowserModule,
