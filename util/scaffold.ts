@@ -63,9 +63,11 @@ function puzzleDataWebRequest(year: number, day: number, type: 'description' | '
     };
 
     return new Promise((resolve, reject) => {
+        let data = '';
         const req = https.get(requestOptions, res => {
             console.log(`Response for ${type}: ${res.statusCode}`);
-            res.on('data', d => resolve(d.toString()));
+            res.on('data', chunk => data += chunk.toString());
+            res.on('end', () => resolve(data));
         });
         req.on('error', error => reject(error));
         req.end();
@@ -106,7 +108,7 @@ function fillTemplate(template: string, dayNumber: number, twoDigitDayNumber: st
 async function createNewSolutionFilesAsync(dayNumber?: number, year: number = 2020) {
     dayNumber = dayNumber ?? await getNextSolutionIndex();
 
-    console.log(`Scaffolding day ${dayNumber}.`);
+    console.log(`Scaffolding day ${dayNumber} of ${year}.`);
     const twoDigitDayNumber = dayNumber.toString().padStart(2, '0');
     const newSourcePath = `${solutionPath}day${twoDigitDayNumber}.ts`;
     const newInputPath = `${inputPath}day${twoDigitDayNumber}.txt`;
@@ -147,15 +149,16 @@ async function parseArgs() {
     });
     parser.add_argument('days', {
         help: 'Scaffold a single day or multiple days.',
-        metavar: 'days', default: undefined, type: 'int', nargs: '+'
+        metavar: 'days', default: undefined, type: 'int', nargs: '*'
     });
     const args = parser.parse_args();
 
-    let days: number[] = [undefined];
-    if (args.days) {
+    let days: number[];
+    if (args.days && args.days.length > 0) {
         days = args.days;
         console.log(`Scaffolding solutions for day(s): ${days.join(', ')}`);
     } else {
+        days = [undefined];
         console.log('Scaffolding solution for first unavailable day.');
     }
 
