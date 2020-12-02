@@ -32,7 +32,7 @@ async function app(days: number[]) {
                     let resultState: SolutionResult | SolutionError;
                     consoleRewrite(`Part ${part}...`);
                     solution.solveWithProgressAsync(part).subscribe({
-                        next: (state) => {
+                        next: state => {
                             switch (state.type) {
                                 case 'result': resultState = state; result = state.result; break;
                                 case 'error': resultState = state; result = 'Error - ' + state.message; break;

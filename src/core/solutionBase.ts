@@ -10,6 +10,7 @@ import { Stopwatch } from 'ts-stopwatch';
 export default abstract class SolutionBase {
     minTimeBetweenUpdatesMs = 20;
 
+    protected input: string;
     protected inputLines: string[];
 
     private currentSolution: {
@@ -20,6 +21,7 @@ export default abstract class SolutionBase {
     };
 
     init(input: string): SolutionBase {
+        this.input = input;
         this.inputLines = this.parseInputLines(input);
         return this;
     }
@@ -54,7 +56,8 @@ export default abstract class SolutionBase {
                 this.currentSolution.progressStopwatch.start();
 
                 this.currentSolution.stopwatch.start();
-                const result = partFunction.apply(this);
+                let result = partFunction.apply(this);
+                result = result === undefined ? undefined : result + '';
                 const timeMs = this.currentSolution.stopwatch.stop();
 
                 subscriber.next(new SolutionResult(part, result, timeMs));
@@ -68,9 +71,9 @@ export default abstract class SolutionBase {
         });
     }
 
-    protected abstract part1(): string;
+    protected abstract part1(): string | number;
 
-    protected abstract part2(): string;
+    protected abstract part2(): string | number;
 
     protected updateProgress(percentage: number) {
         const current = this.currentSolution;

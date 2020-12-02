@@ -8,14 +8,14 @@ import { solutionInfo } from '../core/solutionInfo';
 })
 export class Day01 extends SolutionBase {
 
-    protected part1(): string {
+    protected part1(): number {
         const numbers = this.inputLines.map(x => toInteger(x));
         for (let i = 0; i < numbers.length; i++) {
             const a = numbers[i];
             for (let j = i + 1; j < numbers.length; j++) {
                 const b = numbers[j];
                 if (a + b === 2020) {
-                    return (a * b).toString();
+                    return a * b;
                 }
             }
         };
@@ -23,7 +23,7 @@ export class Day01 extends SolutionBase {
         return undefined;
     }
 
-    protected part2(): string {
+    protected part2(): number {
         const numbers = this.inputLines.map(x => toInteger(x));
         for (let i = 0; i < numbers.length; i++) {
             const a = numbers[i];
@@ -32,7 +32,7 @@ export class Day01 extends SolutionBase {
                 for (let k = j + 1; k < numbers.length; k++) {
                     const c = numbers[k];
                     if (a + b + c === 2020) {
-                        return (a * b * c).toString();
+                        return a * b * c;
                     }
                 }
             }
