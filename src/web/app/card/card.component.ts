@@ -1,18 +1,22 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Stopwatch } from 'ts-stopwatch';
 import { SolutionInfo } from '../../../core/solutionInfo';
 import { SolutionError, SolutionResult } from '../../../core/solutionProgress';
 import { InputService } from '../services/input.service';
+import { VisualizationService } from '../services/visualization.service';
 import { WorkerService } from '../services/worker.service';
+import { VisualizationContentDirective } from '../visualizations/visContentDirective';
+import { VisualizationBaseComponent } from '../visualizations/visualization.base.component';
 
-type Result = {
+export type RuntimeResult = {
     value?: string,
     time?: number,
     onGoing?: boolean,
     percentage?: number,
     stopwatch?: Stopwatch,
-    updateTimeout?: NodeJS.Timeout
+    updateTimeout?: NodeJS.Timeout,
+    data?: SolutionResult
 };
 
 @Component({
@@ -23,8 +27,11 @@ type Result = {
 export class CardComponent implements OnInit {
     @Input() solutionInfo: SolutionInfo;
 
+    @ViewChild(VisualizationContentDirective, { static: true })
+    contentHost: VisualizationContentDirective;
+
     input = '';
-    results: Result[] = [{}, {}];
+    results: RuntimeResult[] = [{}, {}];
     isBusy: boolean;
     isInputFieldVisible: boolean;
 
@@ -35,7 +42,10 @@ export class CardComponent implements OnInit {
 
     constructor(
         private workerService: WorkerService,
-        private inputService: InputService) { }
+        private inputService: InputService,
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private visualizationService: VisualizationService,
+    ) { }
 
     ngOnInit(): void {
         this.loadInput();
@@ -57,6 +67,7 @@ export class CardComponent implements OnInit {
                 switch (state.type) {
                     case 'result':
                         result.value = state.result;
+                        result.data = state;
                         break;
                     case 'error':
                         result.value = 'error';
@@ -84,6 +95,22 @@ export class CardComponent implements OnInit {
     private solveCompleted(): void {
         this.isBusy = false;
         this.solutionSubscription = null;
+        this.updateVisualization(v => {
+            v.solutionInfo = this.solutionInfo;
+            v.results = this.results;
+        });
+    }
+
+    private updateVisualization(updater: (v: VisualizationBaseComponent) => void) {
+        const visType = this.visualizationService.visualizers.get(this.solutionInfo.day);
+        if (!visType) { return; }
+
+        const componentFactory = this.componentFactoryResolver.resolveComponentFactory(visType);
+        const viewContainerRef = this.contentHost.viewContainerRef;
+        viewContainerRef.clear();
+
+        const componentRef = viewContainerRef.createComponent(componentFactory);
+        updater(componentRef.instance);
     }
 
     private endPartAndStartNextPart(state: SolutionResult | SolutionError = undefined): void {
@@ -106,13 +133,13 @@ export class CardComponent implements OnInit {
         }
     }
 
-    private endPart(result: Result): void {
+    private endPart(result: RuntimeResult): void {
         result.onGoing = false;
         result.stopwatch?.stop();
         clearTimeout(result.updateTimeout);
     }
 
-    private updateResultTime(result: Result): void {
+    private updateResultTime(result: RuntimeResult): void {
         if (result.onGoing) {
             result.time = result.stopwatch.getTime();
             result.updateTimeout = setTimeout(() => this.updateResultTime(result), 50);

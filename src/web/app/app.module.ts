@@ -5,11 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CardComponent } from './card/card.component';
+import { Day01Component } from './visualizations/day01/day01.component';
+import { VisualizationContentDirective } from './visualizations/visContentDirective';
 
 @NgModule({
     declarations: [
         AppComponent,
-        CardComponent
+        CardComponent,
+        VisualizationContentDirective
     ],
     imports: [
         BrowserModule,

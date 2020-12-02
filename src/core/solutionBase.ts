@@ -12,6 +12,7 @@ export default abstract class SolutionBase {
 
     protected input: string;
     protected inputLines: string[];
+    protected visualizationData: any;
 
     private currentSolution: {
         subscriber: Subscriber<SolutionState>,
@@ -32,6 +33,7 @@ export default abstract class SolutionBase {
 
     solveWithProgressAsync(part: number): Observable<SolutionState> {
         return new Observable<SolutionState>(subscriber => {
+            this.visualizationData = null;
             const stopwatch = new Stopwatch();
             try {
                 if (part !== 1 && part !== 2) {
@@ -59,13 +61,15 @@ export default abstract class SolutionBase {
                 let result = partFunction.apply(this);
                 result = result === undefined ? undefined : result + '';
                 const timeMs = this.currentSolution.stopwatch.stop();
-
-                subscriber.next(new SolutionResult(part, result, timeMs));
+                const resultPack = new SolutionResult(part, result, timeMs);
+                resultPack.visualizationData = this.visualizationData;
+                subscriber.next(resultPack);
             } catch (exception) {
                 const timeMs = stopwatch.stop();
                 subscriber.next(new SolutionError(part, exception, timeMs));
             } finally {
                 subscriber.complete();
+                this.visualizationData = null;
                 this.currentSolution = null;
             }
         });

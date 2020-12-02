@@ -14,6 +14,7 @@ export class SolutionProgress extends SolutionStateBase {
 
 export class SolutionResult extends SolutionStateBase {
     type: 'result' = 'result';
+    visualizationData?: any;
 
     constructor(part: number, public result: string, public timeMs: number) {
         super(part);
