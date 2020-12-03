@@ -159,7 +159,7 @@ async function parseArgs() {
         console.log(`Scaffolding solutions for day(s): ${days.join(', ')}`);
     } else {
         days = [undefined];
-        console.log('Scaffolding solution for first unavailable day.');
+        console.log('Scaffolding solution for first available day.');
     }
 
     for (let day of days) {
