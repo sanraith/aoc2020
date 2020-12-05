@@ -9,7 +9,10 @@
         "tsconfig*.json",
         "tslint.json",
         "angular.json",
-        "**/lib/**"
+        "**/lib/**",
+        "src/web/assets/**",
+        "tests/**/*.spec.ts",
+        "docs/**"
     ],
     "cSpell.words": [
         "Scroller",

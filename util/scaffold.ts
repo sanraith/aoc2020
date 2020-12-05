@@ -134,6 +134,11 @@ async function createNewSolutionFilesAsync(dayNumber?: number, year: number = 20
     const testContents = fillTemplate(testTemplate, dayNumber, twoDigitDayNumber, title);
     await fsAsync.writeFile(newTestPath, testContents, { encoding: 'utf-8' });
 
+    console.log('Opening generated files in vs code...');
+    for (let filePath of [newInputPath, newTestPath, newSourcePath]) {
+        await runChildProcessAsync(`code ${filePath}`);
+    }
+
     console.log('Done.');
 }
 
