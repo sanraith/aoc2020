@@ -51,7 +51,7 @@ export class Day07 extends SolutionBase {
     }
 
     private parseBags(): Map<string, Bag> {
-        const lineRegex = /^([a-z]+ [a-z]+) bags contain (?:no other bags|(.+)).$/;
+        const lineRegex = /^([a-z]+ [a-z]+) bags contain (?:no other bags|(.+))\.$/;
         const bags = new Map<string, Bag>();
         for (let line of this.inputLines) {
             const [, type, innerBagsStr] = lineRegex.exec(line);
