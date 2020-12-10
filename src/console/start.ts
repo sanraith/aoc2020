@@ -72,11 +72,11 @@ async function parseArgs() {
         days = args.days;
         console.log(`Running solutions for day(s): ${days.join(', ')}`);
     } else if (args.last) {
-        days = [Array.from(solutionManager.getSolutionsByDay().keys()).sort().reverse()[0]];
+        days = [Array.from(solutionManager.getSolutionsByDay().keys()).sort((a, b) => b - a)[0]];
         console.log(`Running last available day: ${days[0]}`);
     } else {
         console.log('Running all available solutions.');
-        days = Array.from(solutionManager.getSolutionsByDay().keys()).sort();
+        days = Array.from(solutionManager.getSolutionsByDay().keys()).sort((a, b) => a - b);
     }
 
     if (!days || days.length === 0 || days.some(x => x === undefined)) {
