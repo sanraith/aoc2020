@@ -1,18 +1,12 @@
 import { Injectable, Type } from '@angular/core';
-import { Day01Component } from '../visualizations/day01/day01.component';
-import { Day07Component } from '../visualizations/day07/day07.component';
 import { VisualizationBaseComponent } from '../visualizations/visualization.base.component';
+import { rawVisualizationList } from '../visualizations/visualizationInfo';
 
 @Injectable({
     providedIn: 'root'
 })
 export class VisualizationService {
-    visualizers: Map<number, Type<VisualizationBaseComponent>> = new Map();
-
-    constructor() {
-        Array.from([
-            Day01Component,
-            Day07Component
-        ]).forEach(x => this.visualizers.set(new x().day, x));
-    }
+    get visualizers(): Map<number, Type<VisualizationBaseComponent>> {
+        return new Map(rawVisualizationList.map(x => [x.day, x.ctor]));
+    };
 }

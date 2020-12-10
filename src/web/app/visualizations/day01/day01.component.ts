@@ -1,21 +1,21 @@
-import { Component, ElementRef, Injectable, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Day01Data } from '../../../../solutions/day01';
 import { RuntimeResult } from '../../card/card.component';
-import { Animation, Animator, DrawableElement } from '../animation';
+import { Animation, Animator, Drawable } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';
+import { VisualizationInfo } from '../visualizationInfo';
 
 @Component({
     selector: 'app-day01',
-    templateUrl: './day01.component.html',
-    styleUrls: ['./day01.component.scss']
+    templateUrl: './day01.component.html'
 })
+@VisualizationInfo({ day: 1 })
 export class Day01Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
     constructor() {
         super();
-        this.day = 1;
     }
 
     ngOnInit(): void {
@@ -46,17 +46,18 @@ class Day01Animation extends Animation {
         numbers.forEach((number, i) => { // Add diagram elements
             const height = this.normalize(number, 2020, this.height - 10);
             this.elements.push({
-                rect: { x: diagramLeft + i * partWidth, y: this.height - height, width: partWidth, height: height },
+                pos: { x: diagramLeft + i * partWidth, y: this.height - height, },
+                size: { width: partWidth, height: height },
                 isVisible: false,
                 color: 'red',
                 draw: (e, ctx, time) => {
                     ctx.fillStyle = e.color;
                     let displacement = this.sinTransform((time + i / numbers.length * 1000) / 1000) * 5 - 5;
                     displacement = displacement * (1 - time / totalLength);
-                    ctx.fillRect(e.rect.x,
-                        e.rect.y + displacement,
-                        e.rect.width,
-                        e.rect.height);
+                    ctx.fillRect(e.pos.x,
+                        e.pos.y + displacement,
+                        e.size.width,
+                        e.size.height);
                 }
             });
         });
@@ -97,11 +98,11 @@ class Day01Animation extends Animation {
         const check = checks.slice(currentCheckIndex * singleCheckCount, currentCheckIndex * singleCheckCount + singleCheckCount);
         for (let [element, i] of this.elements.map((x, i) => [x, i])) {
             if (i < check[0]) {
-                (<DrawableElement>element).color = 'gray';
+                (<Drawable>element).color = 'gray';
             } else if (check.indexOf(<number>i) >= 0) {
-                (<DrawableElement>element).color = 'blue';
+                (<Drawable>element).color = 'blue';
             } else {
-                (<DrawableElement>element).color = 'red';
+                (<Drawable>element).color = 'red';
             }
         }
 

@@ -1,20 +1,20 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Bag, Day07Data } from '../../../../solutions';
-import { Animation, Animator, DrawableElement as Drawable, Rect } from '../animation';
+import { Animation, Animator, Drawable, Pos } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';
+import { VisualizationInfo } from '../visualizationInfo';
 
 @Component({
     selector: 'app-day07',
-    templateUrl: './day07.component.html',
-    styleUrls: ['./day07.component.scss']
+    templateUrl: './day07.component.html'
 })
+@VisualizationInfo({ day: 7 })
 export class Day07Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
     constructor() {
         super();
-        this.day = 7;
         this.height = 400;
     }
 
@@ -62,9 +62,9 @@ class Day07Animation extends Animation {
                     line.isVisible = true;
                     if (target.isVisible) { continue; }
                     target.isVisible = true;
-                    const targetPos = target.rect;
-                    const startPos = <Rect>{ x: source.rect.x, y: source.rect.y, width: target.rect.width, height: target.rect.height };
-                    target.rect = JSON.parse(JSON.stringify(startPos));
+                    const targetPos = target.pos;
+                    const startPos = <Pos>{ x: source.pos.x, y: source.pos.y };
+                    target.pos = JSON.parse(JSON.stringify(startPos));
                     this.animators.push(
                         this.createMoveToPlaceAnimator(target, startPos, targetPos, animationStart + time, moveToPlaceDuration));
                 }
@@ -83,7 +83,7 @@ class Day07Animation extends Animation {
         }
     }
 
-    private createMoveToPlaceAnimator(item: Drawable, startPos: Rect, targetPos: Rect, startTime: number, duration: number) {
+    private createMoveToPlaceAnimator(item: Drawable, startPos: Pos, targetPos: Pos, startTime: number, duration: number) {
         return <Animator>{
             start: startTime,
             length: duration,
@@ -92,7 +92,7 @@ class Day07Animation extends Animation {
                 const easedProgress = this.easeOutElastic(progress);
                 const xDiff = targetPos.x - startPos.x;
                 const yDiff = targetPos.y - startPos.y;
-                const rect = item.rect;
+                const rect = item.pos;
                 rect.x = startPos.x + xDiff * easedProgress;
                 rect.y = startPos.y + yDiff * easedProgress;
 
@@ -129,24 +129,24 @@ class Day07Animation extends Animation {
                 const vDistanceFromStart = (partSize + partMarginY) * i;
                 const rectSource = {
                     x: (partSize + partMarginX) * (j + 1),
-                    y: drawStyle === 'down' ? top + vDistanceFromStart : this.height - top - partSize - vDistanceFromStart,
-                    width: partSize, height: partSize
+                    y: drawStyle === 'down' ? top + vDistanceFromStart : this.height - top - partSize - vDistanceFromStart
                 };
 
                 const element = <Drawable>{
                     color: bag.type.split(' ')[1],
-                    rect: JSON.parse(JSON.stringify(rectSource)),
+                    pos: JSON.parse(JSON.stringify(rectSource)),
+                    size: { width: partSize, height: partSize },
                     isVisible: false,
                     draw: (e, ctx, time) => {
                         ctx.fillStyle = e.color;
-                        ctx.fillRect(e.rect.x, e.rect.y, e.rect.width, e.rect.height);
+                        ctx.fillRect(e.pos.x, e.pos.y, e.size.width, e.size.height);
                         ctx.strokeStyle = 'black';
-                        ctx.strokeRect(e.rect.x, e.rect.y, e.rect.width, e.rect.height);
+                        ctx.strokeRect(e.pos.x, e.pos.y, e.size.width, e.size.height);
                         if (bag.type === this.day07Data[0].myBag.type) {
                             ctx.fillStyle = 'black';
                             ctx.font = '12px Arial';
                             const text = drawStyle === 'up' ? 'contained in (1 of each)' : 'contains (1 of each)';
-                            ctx.fillText(`${bag.type} - ${text}`, e.rect.x + e.rect.width + 15, e.rect.y + 5);
+                            ctx.fillText(`${bag.type} - ${text}`, e.pos.x + e.size.width + 15, e.pos.y + 5);
                         }
                     }
                 };
@@ -172,8 +172,8 @@ class Day07Animation extends Animation {
                     ctx.strokeStyle = e.color;
                     ctx.globalAlpha = 0.2;
                     ctx.beginPath();
-                    ctx.moveTo(source.rect.x + partSize / 2, source.rect.y + partSize / 2);
-                    ctx.lineTo(target.rect.x + partSize / 2, target.rect.y + partSize / 2);
+                    ctx.moveTo(source.pos.x + partSize / 2, source.pos.y + partSize / 2);
+                    ctx.lineTo(target.pos.x + partSize / 2, target.pos.y + partSize / 2);
                     ctx.stroke();
                     ctx.restore();
                 }

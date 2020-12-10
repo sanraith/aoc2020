@@ -6,7 +6,6 @@ export abstract class VisualizationBaseComponent {
     solutionInfo: SolutionInfo;
     width = 800;
     height = 200;
-    day = -1;
 
     set results(value: RuntimeResult[]) {
         this._results = value;

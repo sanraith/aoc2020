@@ -14,6 +14,7 @@ import { Day07Component } from './visualizations/day07/day07.component';
         AppComponent,
         CardComponent,
         VisualizationContentDirective,
+        Day01Component,
         Day07Component
     ],
     imports: [

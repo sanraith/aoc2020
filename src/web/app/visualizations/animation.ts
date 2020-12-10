@@ -1,8 +1,13 @@
 import { RuntimeResult } from '../card/card.component';
 
-export type Rect = {
-    x: number; y: number;
-    width: number; height: number;
+export type Pos = {
+    x: number;
+    y: number;
+}
+
+export type Size = {
+    width: number;
+    height: number;
 }
 
 export type Animator = {
@@ -11,13 +16,13 @@ export type Animator = {
     animate(animator: Animator, time: number): boolean;
 };
 
-export type DrawableElement = {
+export type Drawable = {
     id?: string;
     isVisible?: boolean;
-    rect?: Rect;
-    rectSource?: Rect;
-    color: string;
-    draw(element: DrawableElement, ctx: CanvasRenderingContext2D, time: number): void;
+    pos?: Pos;
+    size?: Size;
+    color?: string;
+    draw(element: Drawable, ctx: CanvasRenderingContext2D, time: number): void;
 }
 
 export class Animation {
@@ -25,7 +30,7 @@ export class Animation {
         private ctx: CanvasRenderingContext2D, protected runtimeResults: RuntimeResult[]) { }
 
     protected animators: Animator[] = [];
-    protected elements: DrawableElement[] = [];
+    protected elements: Drawable[] = [];
 
     start(): void { this.animateLoop(); }
 
