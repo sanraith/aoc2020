@@ -8,7 +8,7 @@ import { solutionInfo } from '../core/solutionInfo';
 export class Day10 extends SolutionBase {
 
     protected part1(): number {
-        const adapters = this.getAdapters();
+        const adapters = this.parseAdapters();
 
         const differences = Array(4).fill(0);
         for (let i = 1; i < adapters.length; i++) {
@@ -21,30 +21,30 @@ export class Day10 extends SolutionBase {
     }
 
     protected part2(): number {
-        const adapters = this.getAdapters();
-        const cache = Array(adapters.length).fill(null);
-        const arrangementCount = this.countArrangements(0, adapters, cache);
+        const adapters = this.parseAdapters();
+        const arrangementCount = this.countArrangements(adapters);
 
         return arrangementCount;
     }
 
-    private countArrangements(startIndex: number, adapters: number[], cache: number[]) {
-        const adapter = adapters[startIndex];
+    private countArrangements(adapters: number[]) {
+        const arrangementCounts = Array(adapters.length).fill(null);
 
-        let count = 0;
-        let index = startIndex + 1;
-        while (index < adapters.length && adapters[index] <= adapter + 3) {
-            count += cache[index] ?? this.countArrangements(index, adapters, cache);
-            index++;
+        for (let start = adapters.length - 1; start >= 0; start--) {
+            const adapter = adapters[start];
+            let count = 0;
+            let next = start + 1;
+            while (next < adapters.length && adapters[next] <= adapter + 3) {
+                count += arrangementCounts[next];
+                next++;
+            }
+            arrangementCounts[start] = Math.max(1, count); // Count single adapter as 1 arrangement instead of 0
         }
 
-        count = Math.max(1, count); // Count single adapter as 1 arrangement instead of 0
-        cache[startIndex] = count;
-
-        return count;
+        return arrangementCounts[0];
     }
 
-    private getAdapters(): number[] {
+    private parseAdapters(): number[] {
         const adapters = this.inputLines.map(x => parseInt(x)).sort((a, b) => a - b);
         adapters.splice(0, 0, 0);
         adapters.push(adapters[adapters.length - 1] + 3);
