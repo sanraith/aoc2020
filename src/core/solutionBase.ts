@@ -79,10 +79,10 @@ export default abstract class SolutionBase {
 
     protected abstract part2(): string | number;
 
-    protected updateProgress(percentage: number) {
+    protected updateProgress(progress: number) {
         const current = this.currentSolution;
         if (current.progressStopwatch.getTime() > this.minTimeBetweenUpdatesMs) {
-            current.subscriber.next(new SolutionProgress(current.activePart, percentage, current.stopwatch.getTime()));
+            current.subscriber.next(new SolutionProgress(current.activePart, progress, current.stopwatch.getTime()));
             current.progressStopwatch.start(true);
         }
     }

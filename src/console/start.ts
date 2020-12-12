@@ -7,7 +7,7 @@ let lastConsoleLineLength = 0;
 
 function consoleRewrite(message: string, newLine: boolean = false) {
     process.stdout.write('\r'.padEnd(lastConsoleLineLength, ' '));
-    lastConsoleLineLength = message.length;
+    lastConsoleLineLength = message.length + 1;
     process.stdout.write('\r' + message + (newLine ? '\n' : ''));
 }
 
@@ -27,7 +27,7 @@ async function app(days: number[]) {
 
             console.log(`Day ${solutionInfo.day} - ${solutionInfo.title}`);
             for (let part of [1, 2]) {
-                await new Promise((resolve, _) => {
+                await new Promise<void>((resolve, _) => {
                     let result: string;
                     let resultState: SolutionResult | SolutionError;
                     consoleRewrite(`Part ${part}...`);
@@ -37,7 +37,7 @@ async function app(days: number[]) {
                                 case 'result': resultState = state; result = state.result; break;
                                 case 'error': resultState = state; result = 'Error - ' + state.message; break;
                                 case 'progress':
-                                    consoleRewrite(`Part ${part} (${state.timeMs}+ ms): ${(state.percentage * 100).toFixed(2)} %`);
+                                    consoleRewrite(`Part ${part} (${state.timeMs}+ ms): ${(state.progress * 100).toFixed(2)} %`);
                                     break;
                             }
                         },

@@ -7,7 +7,7 @@ abstract class SolutionStateBase {
 
 export class SolutionProgress extends SolutionStateBase {
     type: 'progress' = 'progress';
-    constructor(part: number, public percentage: number, public timeMs: number = 0) {
+    constructor(part: number, public progress: number, public timeMs: number = 0) {
         super(part);
     }
 }

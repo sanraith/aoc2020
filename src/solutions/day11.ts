@@ -47,12 +47,13 @@ export class Day11 extends SolutionBase {
         const rowCount = seats.length;
         const columnCount = seats[0].length;
         const maxOccupiedNoticeDistance = rules.noticeSeatsFromAfar ? undefined : 1;
+        const maxChangeCount = _(seats).flatMap().filter(x => x !== FLOOR).size();
 
         let prev = seats.map(r => r.map(s => s));
-        let isSeatChanged = true;
+        let changeCount = maxChangeCount;
 
-        while (isSeatChanged) {
-            isSeatChanged = false;
+        while (changeCount > 0) {
+            changeCount = 0;
             [seats, prev] = [prev, seats];
 
             for (let row = 0; row < rowCount; row++) {
@@ -62,16 +63,16 @@ export class Day11 extends SolutionBase {
 
                     const occupiedCount = this.getOccupiedAdjacentCount(prev, row, column, maxOccupiedNoticeDistance);
                     if (seat === EMPTY && occupiedCount === 0) {
-                        isSeatChanged = true;
                         seat = OCCUPIED;
+                        changeCount++;
                     } else if (seat === OCCUPIED && occupiedCount >= rules.minAdjacentOccupiedToBecomeEmpty) {
-                        isSeatChanged = true;
                         seat = EMPTY;
+                        changeCount++;
                     }
-
                     seats[row][column] = seat;
                 }
             }
+            this.updateProgress((maxChangeCount - changeCount) / maxChangeCount);
         };
 
         return seats;
