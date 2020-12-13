@@ -2,6 +2,8 @@ import { regexGetAllResults } from '../core/helpers';
 import SolutionBase from '../core/solutionBase';
 import { solutionInfo } from '../core/solutionInfo';
 
+export type Day13Data = { visitedTimestamps: number[] }
+
 @solutionInfo({
     day: 13,
     title: 'Shuttle Search'
@@ -32,12 +34,14 @@ export class Day13 extends SolutionBase {
             .filter(x => x.id >= 0)
             .sort((a, b) => b.id - a.id);
 
+        let visitedTimestamps: number[] = [];
         let previousMatch: number = null;
-        let jumpSize = buses[0].id;
-        let timestamp = jumpSize - buses[0].offset;
+        let skipCount = buses[0].id;
+        let timestamp = skipCount - buses[0].offset;
         let busIndex = 1;
 
         while (true) {
+            visitedTimestamps.push(timestamp);
             if ((timestamp + buses[busIndex].offset) % buses[busIndex].id === 0) {
                 if (busIndex === buses.length - 1) {
                     break;
@@ -45,16 +49,17 @@ export class Day13 extends SolutionBase {
                 if (previousMatch === null) {
                     previousMatch = timestamp;
                 } else {
-                    jumpSize = timestamp - previousMatch;
+                    skipCount = timestamp - previousMatch;
                     timestamp = previousMatch;
                     previousMatch = null;
                     busIndex++;
                     continue;
                 }
             }
-            timestamp += jumpSize;
+            timestamp += skipCount;
         }
 
+        this.visualizationData = <Day13Data>{ visitedTimestamps };
         return timestamp;
     }
 

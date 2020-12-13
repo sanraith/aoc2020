@@ -8,6 +8,7 @@ import { CardComponent } from './card/card.component';
 import { Day01Component } from './visualizations/day01/day01.component';
 import { VisualizationContentDirective } from './visualizations/visContentDirective';
 import { Day07Component } from './visualizations/day07/day07.component';
+import { Day13Component } from './visualizations/day13/day13.component';
 
 @NgModule({
     declarations: [
@@ -15,7 +16,8 @@ import { Day07Component } from './visualizations/day07/day07.component';
         CardComponent,
         VisualizationContentDirective,
         Day01Component,
-        Day07Component
+        Day07Component,
+        Day13Component
     ],
     imports: [
         BrowserModule,

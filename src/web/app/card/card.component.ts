@@ -34,6 +34,7 @@ export class CardComponent implements OnInit {
     results: RuntimeResult[] = [{}, {}];
     isBusy: boolean;
     isInputFieldVisible: boolean;
+    autoStartDay = null;
 
     get twoLetterDay(): string { return this.solutionInfo.day.toString().padStart(2, '0'); }
     get hasOngoingSolution(): boolean { return this.results.some(x => x.onGoing); }
@@ -151,5 +152,8 @@ export class CardComponent implements OnInit {
         this.isBusy = true;
         this.input = await this.inputService.getInput(this.solutionInfo.day);
         this.isBusy = false;
+        if (this.solutionInfo.day === this.autoStartDay) {
+            await this.solve();
+        }
     }
 }
