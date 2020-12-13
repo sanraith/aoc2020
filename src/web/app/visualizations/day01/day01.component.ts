@@ -3,19 +3,18 @@ import { Day01Data } from '../../../../solutions/day01';
 import { RuntimeResult } from '../../card/card.component';
 import { Animation, Animator, Drawable } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';
-import { VisualizationInfo } from '../visualizationInfo';
 
 @Component({
     selector: 'app-day01',
     templateUrl: './day01.component.html'
 })
-@VisualizationInfo({ day: 1 })
 export class Day01Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
     constructor() {
         super();
+        this.day = 1;
     }
 
     ngOnInit(): void {

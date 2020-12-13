@@ -1,21 +1,20 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import _ = require('lodash');
 import { Day13Data } from '../../../../solutions/day13';
-import { Animation, Animator, Drawable, Pos } from '../animation';
+import { Animation, Drawable, Pos } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';
-import { VisualizationInfo } from '../visualizationInfo';
 
 @Component({
     selector: 'app-day13',
     templateUrl: './day13.component.html'
 })
-@VisualizationInfo({ day: 13 })
 export class Day13Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
     constructor() {
         super();
+        this.day = 13;
     }
 
     ngOnInit(): void {
@@ -44,11 +43,15 @@ class Day13Animation extends Animation {
         const myLog = (x: number) => Math.log10(x);
         const multiplier = this.height / myLog(maxValue);
         const norm = (x: number) => myLog(x) * multiplier;
-        const columnWidth = this.width / visited.length;
+        const marginH = 1;
+        const columnWidth = (this.width - marginH * 2) / visited.length;
+
+        this.elements.push(this.generateLine({ x: 1, y: this.height - 1 }, { x: 1, y: 0 }));
+        this.elements.push(this.generateLine({ x: 1, y: this.height - 1 }, { x: this.width, y: this.height - 1 }));
 
         const lineParts: Drawable[] = [];
         for (let i = 1; i < visited.length; i++) {
-            const left = (i - 1) * columnWidth;
+            const left = marginH + (i - 1) * columnWidth;
             const start = visited[i - 1];
             const end = visited[i];
             const line = {
@@ -82,16 +85,13 @@ class Day13Animation extends Animation {
             }
         });
 
-        this.elements.push(this.generateLine({ x: 1, y: this.height - 1 }, { x: 1, y: 0 }));
-        this.elements.push(this.generateLine({ x: 1, y: this.height - 1 }, { x: this.width, y: this.height - 1 }));
-
         this.elements.push(this.generateText(maxValue.toString(), { x: 5, y: 12 }));
         this.elements.push(this.generateText('0',
             { x: 5, y: this.height + 2 }, { fromBottom: true }));
+        this.elements.push(this.generateText(visited[0].toString(),
+            { x: 5, y: this.height + 4 - norm(visited[0]) }));
         this.elements.push(this.generateText(visited.length.toString(),
             { x: this.width, y: this.height + 2 }, { fromBottom: true, fromRight: true }));
-
-
     }
 
     private generateLine(start: Pos, end: Pos) {

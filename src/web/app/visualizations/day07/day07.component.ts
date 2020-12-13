@@ -2,19 +2,18 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Bag, Day07Data } from '../../../../solutions';
 import { Animation, Animator, Drawable, Pos } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';
-import { VisualizationInfo } from '../visualizationInfo';
 
 @Component({
     selector: 'app-day07',
     templateUrl: './day07.component.html'
 })
-@VisualizationInfo({ day: 7 })
 export class Day07Component extends VisualizationBaseComponent implements OnInit {
     @ViewChild('canvas', { static: true })
     canvas: ElementRef<HTMLCanvasElement>;
 
     constructor() {
         super();
+        this.day = 7;
         this.height = 400;
     }
 

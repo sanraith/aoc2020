@@ -47,3 +47,6 @@ Thumbs.db
 
 # Local session config
 util/session.json
+
+# notes
+notes/**/*
