@@ -8,6 +8,8 @@ type Group = {
     memOps: { address: bigint, value: bigint }[]
 };
 
+const WORD_SIZE = 36;
+
 @solutionInfo({
     day: 14,
     title: 'Docking Data'
@@ -16,23 +18,13 @@ export class Day14 extends SolutionBase {
 
     protected part1(): string {
         const groups = this.parseInput();
-        const flip = BigInt('0b' + (Array(36).fill('1').join('')));
+        const flip = BigInt('0b' + (Array(WORD_SIZE).fill('1').join('')));
         const memory = new Map<bigint, bigint>();
 
         for (let { memOps, mask0, mask1 } of groups) {
             for (let { address, value } of memOps) {
-                // console.log();
-                // console.log('mask:   ' + mask.padStart(36, '0'));
-                // console.log('value:  ' + this.toBinary(value).padStart(36, '0'));
-                // console.log('+mask1: ' + this.toBinary(mask1).padStart(36, '0'));
-
                 value = value | mask1;
-                // console.log('=value: ' + this.toBinary(value).padStart(36, '0'));
-                // console.log('+mask0: ' + this.toBinary(mask0).padStart(36, '0'));
-
                 value = ((value ^ flip) | mask0) ^ flip;
-                // console.log('=value: ' + this.toBinary(value).padStart(36, '0'));
-
                 memory.set(address, value);
             }
         }
@@ -51,7 +43,7 @@ export class Day14 extends SolutionBase {
             const { mask, mask1, memOps } = group;
             for (let { address, value } of memOps) {
                 const baseAddress = address | mask1;
-                this.writeToMany(memory, baseAddress, mask, value);
+                this.writeToMemory(memory, baseAddress, mask, value);
             }
         }
 
@@ -59,37 +51,27 @@ export class Day14 extends SolutionBase {
         return sum.toString();
     }
 
-    private writeToMany(memory: Map<bigint, bigint>, baseAddress: bigint, mask: string, value: bigint) {
-        const indexes = this.allIndexOf(mask, 'X');
-        const addressArr = baseAddress.toString(2).padStart(36, '0').split('');
-        const xCount = indexes.length;
-        const max = Math.pow(2, xCount);
+    private writeToMemory(memory: Map<bigint, bigint>, baseAddress: bigint, mask: string, value: bigint) {
+        const xIndexes = this.allIndexOf(mask, 'X');
+        const xCount = xIndexes.length;
+        const combinationCount = Math.pow(2, xCount);
+        const address = baseAddress.toString(2).padStart(WORD_SIZE, '0').split('');
 
-        // console.log();
-        // console.log(baseAddress.toString(2).padStart(36, '0'));
-        // console.log(mask);
-        // console.log(indexes);
-        // console.log(xCount);
-        // console.log();
-
-        for (let aMemory = 0; aMemory < max; aMemory++) {
-            const candidateStr = aMemory.toString(2).padStart(xCount, '0');
+        for (let combination = 0; combination < combinationCount; combination++) {
+            const candidateStr = combination.toString(2).padStart(xCount, '0');
             for (let i = xCount - 1; i >= 0; i--) {
-                addressArr[indexes[i]] = candidateStr[i];
+                address[xIndexes[i]] = candidateStr[i];
             }
 
-            const newAddressStr = addressArr.join('');
-            const newAddress = BigInt('0b' + newAddressStr);
+            const newAddress = BigInt('0b' + address.join(''));
             memory.set(newAddress, value);
-
-            // console.log(newAddressStr.padStart(36, '0'));
         }
     }
 
-    private allIndexOf(text: string, searchFor: string): number[] {
+    private allIndexOf(text: string, searchedStr: string): number[] {
         const matches: number[] = [];
         let index = 0;
-        while ((index = text.indexOf(searchFor, index)) >= 0) {
+        while ((index = text.indexOf(searchedStr, index)) >= 0) {
             matches.push(index);
             index = index + 1;
         }
