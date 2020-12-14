@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import _ = require('lodash');
+import * as _ from 'lodash';
 import { Day13Data } from '../../../../solutions/day13';
 import { Animation, Drawable, Pos } from '../animation';
 import { VisualizationBaseComponent } from '../visualization.base.component';

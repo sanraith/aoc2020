@@ -4,6 +4,7 @@
         "outDir": "./out-tsc/worker",
         "lib": [
             "es2018",
+            "ESNext.BigInt",
             "webworker"
         ],
         "types": []

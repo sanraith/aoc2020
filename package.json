@@ -8,6 +8,7 @@
         "scaffold": "ts-node -C typescript -P ./tsconfig.console.json util/scaffold.ts",
         "generate-index": "barrelsby --delete --singleQuotes --directory src/solutions",
         "test": "jasmine-ts --config=tests/jasmine.json ",
+        "serve": "ng serve",
         "ng": "ng",
         "build": "ng build",
         "ngtest": "ng test",
