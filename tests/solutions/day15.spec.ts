@@ -6,12 +6,12 @@ describe('Day15 solution', function () {
         beforeAll(setupSolution(Day15, `1,3,2`));
 
         it('solves part 1', expectedResult(1, '1'));
-        xit('solves part 2', expectedResult(2, '2578'));
+        it('solves part 2', expectedResult(2, '2578'));
     });
 
-    xdescribe('for puzzle input', function () {
+    describe('for puzzle input', function () {
         beforeAll(setupSolution(Day15));
         it('solves part 1', expectedResult(1, '620'));
-        xit('solves part 2', expectedResult(2, '110871'));
+        it('solves part 2', expectedResult(2, '110871'));
     });
 });

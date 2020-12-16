@@ -24,6 +24,7 @@ async function app(days: number[]) {
             const solution = solutionInfo.create();
             let input = await inputManager.loadInputAsync(solutionInfo.day);
             solution.init(input);
+            solution.minTimeBetweenUpdatesMs = 150;
 
             console.log(`Day ${solutionInfo.day} - ${solutionInfo.title}`);
             for (let part of [1, 2]) {

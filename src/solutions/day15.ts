@@ -22,32 +22,29 @@ export class Day15 extends SolutionBase {
     }
 
     private playGame(numbers: number[], gameLength: number): number {
-        const numbersWhen = new Map<number, number[]>(numbers.map((x, i) => [x, [i]])); // what - when
+        const chunkCount = Math.ceil(gameLength / 500000);
+        const chunkSize = Math.ceil(gameLength / chunkCount);
+        const numbersWhen = new Map<number, number>(numbers.map((x, i) => [x, i])); // what - when
 
-        let prevSpoken = numbers[numbers.length - 1];
-        for (let index = numbers.length; index < gameLength; index++) {
-            this.updateProgress(index / gameLength);
+        let spoken = numbers[numbers.length - 1];
+        let lastIndex: number = undefined;
+        for (let chunk = 0; chunk < chunkCount; chunk++) {
+            this.updateProgress(chunk / chunkCount);
+            const start = Math.max(numbers.length, chunk * chunkSize);
+            const max = Math.min(gameLength, (chunk + 1) * chunkSize);
 
-            let times = numbersWhen.get(prevSpoken);
-            let spoken = 0;
-            if (times.length !== 1) {
-                spoken = times[1] - times[0];
+            for (let index = start; index < max; index++) {
+                if (lastIndex === undefined) {
+                    spoken = 0;
+                } else {
+                    spoken = index - lastIndex - 1;
+                }
+                lastIndex = numbersWhen.get(spoken);
+                numbersWhen.set(spoken, index);
             }
-
-            times = numbersWhen.get(spoken);
-            if (!times) {
-                times = [];
-                numbersWhen.set(spoken, times);
-            }
-            if (times.length > 1) {
-                times.shift();
-            }
-            times.push(index);
-
-            prevSpoken = spoken;
         }
 
-        return prevSpoken;
+        return spoken;
     }
 
     private parseNumbers(): number[] {
