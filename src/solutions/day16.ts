@@ -30,8 +30,13 @@ export class Day16 extends SolutionBase {
     protected part2(): number {
         const { rules, myTicket, nearbyTickets } = this.parseInput();
         const validTickets = nearbyTickets.filter(t => t.every(v => rules.some(r => this.checkValue(v, r))));
-        const validFields = this.filterValidRulesForField(rules, validTickets);
-        const fieldOrder = this.backtrackFieldOrder(validFields);
+        const validFields = this.filterValidRulesByField(rules, validTickets);
+
+        const fieldFrequency = new Map<Field, number>(rules.map(f => [f, 0]));
+        _(validFields).flatMap().forEach(f => fieldFrequency.set(f, fieldFrequency.get(f) + 1));
+        const sortedValidFieldsByFrequency = validFields.map(f => f.sort((a, b) => fieldFrequency.get(a) - fieldFrequency.get(b)));
+
+        const fieldOrder = this.backtrackFieldOrder(sortedValidFieldsByFrequency);
 
         const myRelevantFields = fieldOrder
             .map((r, i) => ({ name: r.name, index: i }))
@@ -42,7 +47,7 @@ export class Day16 extends SolutionBase {
         return result;
     }
 
-    private filterValidRulesForField(rules: Field[], tickets: number[][]): Field[][] {
+    private filterValidRulesByField(rules: Field[], tickets: number[][]): Field[][] {
         const validFields: Field[][] = Array(rules.length).fill(0).map(_ => []);
         for (let ticketIndex = 0; ticketIndex < rules.length; ticketIndex++) {
             for (let rule of rules) {

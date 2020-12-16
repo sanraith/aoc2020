@@ -41,6 +41,6 @@ nearby tickets:
     describe('for puzzle input', function () {
         beforeAll(setupSolution(Day16));
         it('solves part 1', expectedResult(1, '22073'));
-        xit('solves part 2', expectedResult(2, '1346570764607')); // Disabled due to slowness
+        it('solves part 2', expectedResult(2, '1346570764607'));
     });
 });
