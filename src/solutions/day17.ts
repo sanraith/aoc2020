@@ -28,15 +28,15 @@ export class Day17 extends SolutionBase {
         return map.size;
     }
 
-    private executeCycles(map: ConveyMap, params: { cycleCount: number, dimensions: 3 | 4 }): ConveyMap {
+    private executeCycles(map: ConveyMap, options: { cycleCount: number, dimensions: 3 | 4 }): ConveyMap {
         let mapRef: ConveyMap;
         // this.visualize(map, 0);
 
-        for (let cycle = 0; cycle < params.cycleCount; cycle++) {
-            this.updateProgress(cycle / params.cycleCount);
+        for (let cycle = 0; cycle < options.cycleCount; cycle++) {
+            this.updateProgress(cycle / options.cycleCount);
             mapRef = map;
             map = new Set<string>(mapRef.keys());
-            this.executeCycle(map, mapRef, params.dimensions);
+            this.executeCycle(map, mapRef, options.dimensions);
             // this.visualize(map, cycle + 1);
         }
 
