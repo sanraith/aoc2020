@@ -17,7 +17,6 @@ export class Day19 extends SolutionBase {
         const { rules, messages } = this.parseRules();
         const mainRule = rules.get('0');
         const regexStr = `^${this.convertRuleToRegexStr(mainRule)}$`;
-        console.log(regexStr);
         const regex = new RegExp(regexStr, 'm');
 
         let count = 0;
