@@ -75,6 +75,7 @@ export class CardComponent implements OnInit {
                         break;
                     case 'progress':
                         result.percentage = state.progress * 100;
+                        if (result.percentage < 1) { result.percentage = undefined; }
                         break;
                 }
                 if (state.type === 'result' || state.type === 'error') {
