@@ -18,12 +18,12 @@ Player 2:
 10`));
 
         it('solves part 1', expectedResult(1, '306'));
-        it('solves part 2', expectedResult(2, 'Day22Part2'));
+        it('solves part 2', expectedResult(2, '291'));
     });
 
     describe('for puzzle input', function () {
         beforeAll(setupSolution(Day22));
         it('solves part 1', expectedResult(1, '31754'));
-        xit('solves part 2', expectedResult(2, 'Day22Part2'));
+        it('solves part 2', expectedResult(2, '35436'));
     });
 });
