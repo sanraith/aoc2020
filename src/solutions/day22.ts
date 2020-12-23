@@ -12,13 +12,13 @@ export class Day22 extends SolutionBase {
 
     protected part1(): number {
         const decks = this.parseDecks();
-        this.playRecursive(decks, { isRecursive: false });
+        this.playGame(decks, { isRecursive: false });
         return this.calculateScore(decks);
     }
 
     protected part2(): number {
         const decks = this.parseDecks();
-        this.playRecursive(decks, { isRecursive: true });
+        this.playGame(decks, { isRecursive: true });
         return this.calculateScore(decks);
     }
 
@@ -28,7 +28,7 @@ export class Day22 extends SolutionBase {
             .reduce((a, x, i) => a + x * (i + 1), 0);
     }
 
-    private playRecursive(decks: number[][], options: { isRecursive: boolean }): number {
+    private playGame(decks: number[][], options: { isRecursive: boolean }): number {
         const states = new Set<string>();
         let gameCount = ++this.gameCount;
         let roundCount = 0;
@@ -68,7 +68,7 @@ export class Day22 extends SolutionBase {
                 if (this.isLogEnabled) { console.log('Playing a sub-game to determine a winner...'); }
 
                 const copiedDecks = decks.map((d, i) => d.slice(0, dealt[i]));
-                winnerId = this.playRecursive(copiedDecks, options);
+                winnerId = this.playGame(copiedDecks, options);
 
                 if (this.isLogEnabled) { console.log(`\n...anyway, back to game ${gameCount}.`); }
             }
