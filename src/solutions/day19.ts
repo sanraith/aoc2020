@@ -18,18 +18,13 @@ export class Day19 extends SolutionBase {
         const mainRule = rules.get('0');
         const regexStr = `^${this.convertRuleToRegexStr(mainRule)}$`;
         const regex = new RegExp(regexStr, 'm');
+        let matchCount = messages.filter(m => regex.test(m)).length;
 
-        let count = 0;
-        for (let message of messages) {
-            if (regex.test(message)) {
-                count++;
-            }
-        }
-
-        return count;
+        return matchCount;
     }
 
     protected part2(): number {
+        const part1MatchCount = this.part1();
         const { rules, messages } = this.parseRules();
         const mainRule = rules.get('0');
 
@@ -41,66 +36,49 @@ export class Day19 extends SolutionBase {
         r8.options = [[r42], [r42, r8]];
         r11.options = [[r42, r31], [r42, r11, r31]];
 
-        // Brute force with 4 recursion levels (can fail for other inputs...)
+        // Brute force with 5 recursion levels (can fail for other inputs...)
+        const maxRecursionLevel = 5;
         let regexps: RegExp[] = [];
-        for (let r1 = 0; r1 < 4; r1++) {
-            for (let r2 = 0; r2 < 4; r2++) {
-                let regexStr = this.convertRuleToRegexStrPart2(mainRule, new Map([[r8, r1], [r11, r2]]), new Map([[r8, 0], [r11, 0]]));
+        for (let l1 = 0; l1 < maxRecursionLevel; l1++) {
+            for (let l2 = 0; l2 < maxRecursionLevel; l2++) {
+                let regexStr = this.convertRuleToRegexStr(mainRule, new Map([[r8, l1], [r11, l2]]));
                 regexStr = `^${regexStr}$`;
                 const regex = new RegExp(regexStr, 'm');
                 regexps.push(regex);
             }
         }
 
-        let count = 0;
-        for (let { message, i } of messages.map((message, i) => ({ message, i }))) {
-            for (let { regex, j } of regexps.map((regex, j) => ({ regex, j }))) {
-                this.updateProgress(i / messages.length + j / regexps.length / messages.length);
+        let matchCount = 0;
+        for (let [i, message] of messages.entries()) {
+            for (let [j, regex] of regexps.entries()) {
+                this.updateProgress(Math.min(.99, (i + part1MatchCount) / messages.length + j / regexps.length / messages.length));
+
                 if (regex.test(message)) {
-                    count++;
+                    matchCount++;
                     break;
                 }
             }
         }
 
-        return count;
+        return matchCount;
     }
 
-    private convertRuleToRegexStr(rule: Rule): string {
-        const regexParts = [];
+    private convertRuleToRegexStr(rule: Rule,
+        maxRecursion: Map<Rule, number> = undefined,
+        recursion: Map<Rule, number> = undefined): string {
 
         if (rule.onlyHasStringPart) {
             return rule.onlyHasStringPart;
         }
 
-        for (let option of rule.options) {
-            const optionParts = [];
-            for (let part of option) {
-                if (typeof (part) === 'string') {
-                    optionParts.push(part);
-                } else {
-                    optionParts.push(this.convertRuleToRegexStr(part));
-                }
-            }
-            regexParts.push('' + optionParts.join('') + '');
-        }
-
-        return `(${regexParts.map(x => `(${x})`).join('|')})`;
-    }
-
-
-    private convertRuleToRegexStrPart2(rule: Rule, maxRecursion: Map<Rule, number> = undefined,
-        recursion: Map<Rule, number> = undefined): string {
+        if (maxRecursion === undefined) { maxRecursion = new Map<Rule, number>(); }
+        if (recursion === undefined) { recursion = new Map<Rule, number>(Array.from(maxRecursion.keys()).map(x => [x, 0])); }
 
         const regexParts = [];
         let nextRecursion = recursion;
-        if (Array.from(maxRecursion.keys()).includes(rule)) {
+        if (maxRecursion.has(rule)) {
             nextRecursion = new Map(recursion.entries());
             nextRecursion.set(rule, recursion.get(rule) + 1);
-        }
-
-        if (rule.onlyHasStringPart) {
-            return rule.onlyHasStringPart;
         }
 
         for (let option of rule.options) {
@@ -114,18 +92,18 @@ export class Day19 extends SolutionBase {
                         invalid = true;
                         break;
                     }
-                    optionParts.push(this.convertRuleToRegexStrPart2(part, maxRecursion, nextRecursion));
+                    optionParts.push(this.convertRuleToRegexStr(part, maxRecursion, nextRecursion));
                 }
                 if (invalid) {
                     break;
                 }
             }
             if (!invalid) {
-                regexParts.push('' + optionParts.join('') + '');
+                regexParts.push(optionParts.join(''));
             }
         }
 
-        return `(${regexParts.map(x => `(${x})`).join('|')})`;
+        return `(?:${regexParts.join('|')})`;
     }
 
     private parseRules() {

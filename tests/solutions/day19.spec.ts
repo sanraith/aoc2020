@@ -68,12 +68,13 @@ aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
 babaaabbbaaabaababbaabababaaab
 aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba`));
 
+        it('solves part 1', expectedResult(1, '3'));
         it('solves part 2', expectedResult(2, '12'));
     });
 
     describe('for puzzle input', function () {
         beforeAll(setupSolution(Day19));
         it('solves part 1', expectedResult(1, '205'));
-        xit('solves part 2', expectedResult(2, '329')); // TODO too slow
+        it('solves part 2', expectedResult(2, '329'));
     });
 });
