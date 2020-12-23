@@ -16,8 +16,8 @@ export class Day23 extends SolutionBase {
 
     protected part1(): string {
         const cups = this.parseCups();
-        const cupMap = this.play(cups, 100);
-        const labels = this.getLinkedListValues(cupMap.get(1)).filter((x, i) => i > 0).join('');
+        const cupMap = this.shuffle(cups, 100);
+        const labels = this.getLinkedListValues(cupMap[1]).filter((x, i) => i > 0).join('');
 
         return labels;
     }
@@ -30,13 +30,13 @@ export class Day23 extends SolutionBase {
             cups.push(i);
         }
 
-        const cupMap = this.play(cups, 10 * million);
-        const cup1 = cupMap.get(1);
+        const cupMap = this.shuffle(cups, 10 * million);
+        const cup1 = cupMap[1];
 
         return cup1.next.value * cup1.next.next.value;
     }
 
-    private play(cups: number[], moveCount: number): Map<number, Cup> {
+    private shuffle(cups: number[], moveCount: number): Cup[] {
         const cupCount = cups.length;
         const { firstCup, cupMap } = this.convertToLinkedList(cups);
 
@@ -55,7 +55,7 @@ export class Day23 extends SolutionBase {
                 destinationValue = (destinationValue - 2 + cupCount) % cupCount + 1;
             }
 
-            const destination = cupMap.get(destinationValue);
+            const destination = cupMap[destinationValue];
             this.connect(pickUpEnd, destination.next);
             this.connect(destination, pickUpStart);
 
@@ -66,8 +66,6 @@ export class Day23 extends SolutionBase {
     }
 
     private connect(a: Cup, b: Cup) {
-        if (a.next) { a.next.prev = null; }
-        if (b.prev) { b.prev.next = null; }
         a.next = b;
         b.prev = a;
     }
@@ -83,17 +81,18 @@ export class Day23 extends SolutionBase {
         return values;
     }
 
-    private convertToLinkedList(cups: number[]): { firstCup: Cup, cupMap: Map<number, Cup> } {
+    private convertToLinkedList(cups: number[]): { firstCup: Cup, cupMap: Cup[] } {
         let prevItem: Cup = { value: cups[0] };
         const firstCup = prevItem;
-        const cupMap = new Map<number, Cup>([[prevItem.value, prevItem]]);
+        const cupMap = Array<Cup>(cups.length + 1);
+        cupMap[prevItem.value] = prevItem;
 
         for (let i = 1; i < cups.length; i++) {
             const item: Cup = {
                 value: cups[i],
                 prev: prevItem
             };
-            cupMap.set(item.value, item);
+            cupMap[item.value] = item;
             prevItem.next = item;
             prevItem = item;
         }
