@@ -17,7 +17,8 @@ function setupSolution(type: Constructor<SolutionBase>, input: string = undefine
 
 function expectedResult(part: 1 | 2, result: string) {
     return async function () {
-        expect(await this.solution.solveAsync(part)).toEqual(result);
+        const solution = <SolutionBase>this.solution;
+        expect(await solution.solveAsync(part)).toEqual(result);
     };
 }
 
