@@ -28,14 +28,19 @@
     description or change the default <span class="reference">Input</span>.
 </p>
 
+<button class="solveAllButton" (click)="solveAllAsync()">Solve all</button>
 <h2>Solutions</h2>
 
-<div *ngFor="let solutionInfo of solutionInfos">
+<div class="card" *ngFor="let solutionInfo of solutionInfos" [class.activeCard]="activeSolutionInfo === solutionInfo">
     <app-card [solutionInfo]='solutionInfo'></app-card>
 </div>
 
 <p *ngIf="solutionInfos.length === 0">
     No solutions are available yet.
 </p>
+
+<h2 *ngIf="!activeSolutionInfo" style="margin-top: 3rem; text-align: center; margin-bottom: 0rem;">
+    All done, Happy Holidays!
+</h2>
 
 <router-outlet></router-outlet>

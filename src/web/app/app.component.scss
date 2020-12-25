@@ -17,6 +17,21 @@ a {
     font-weight: 500;
 }
 
+.card {
+    margin-top: 1rem;
+}
+
+.activeCard {
+    border: 5px solid $dark-fgcolor;
+}
+
+.solveAllButton {
+    height: 2.5rem;
+    min-width: 145px;
+    float: right;
+    margin-top: 0.25rem;
+}
+
 // Calendar
 
 $_calendarWidth: 0.5; // Relative size of the calendar to its container

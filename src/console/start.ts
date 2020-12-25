@@ -18,6 +18,7 @@ function consoleRewriteLine(message: string) {
 async function app(days: number[]) {
     try {
         const inputManager = new FileInputManager();
+        let totalTime = 0;
 
         for (let day of days) {
             const solutionInfo = solutionManager.getSolutionsByDay().get(day);
@@ -44,6 +45,7 @@ async function app(days: number[]) {
                         },
                         complete: () => {
                             consoleRewriteLine(`Part ${part} (${resultState.timeMs} ms): ${result}`);
+                            totalTime += resultState.timeMs;
                             resolve();
                         }
                     });
@@ -51,6 +53,8 @@ async function app(days: number[]) {
             }
             console.log();
         }
+
+        console.log(`Total time: ${(totalTime / 1000).toFixed(3)} seconds.\n`);
     } catch (e) {
         console.log(`Error: ${e}`);
     }

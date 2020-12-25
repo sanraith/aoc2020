@@ -32,7 +32,9 @@ export class Animation {
     protected animators: Animator[] = [];
     protected elements: Drawable[] = [];
 
-    start(): void { this.animateLoop(); }
+    startAsync(): Promise<void> {
+        return new Promise<void>((resolve) => this.animateLoop(resolve));
+    }
 
     protected normalize(value: number, valueMax: number, boundMax: number) {
         return (value / valueMax) * boundMax;
@@ -42,9 +44,9 @@ export class Animation {
         return Math.sin(x * Math.PI);
     }
 
-    private animateLoop(time: number = undefined, start: number = undefined) {
+    private animateLoop(onComplete: () => void, time: number = undefined, start: number = undefined) {
         if (start === undefined) {
-            requestAnimationFrame((t: number) => this.animateLoop(t, t));
+            requestAnimationFrame((t: number) => this.animateLoop(onComplete, t, t));
             return;
         }
 
@@ -63,7 +65,9 @@ export class Animation {
             .forEach(e => e.draw(e, this.ctx, currentTime));
 
         if (this.animators.length > 0) {
-            requestAnimationFrame((t: number) => this.animateLoop(t, start));
+            requestAnimationFrame((t: number) => this.animateLoop(onComplete, t, start));
+        } else {
+            onComplete();
         }
     }
 }

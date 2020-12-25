@@ -1,6 +1,8 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { solutionManager } from '../../core/solutionManager';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { timeoutAsync } from '../../core/helpers';
+import { SolutionInfo, solutionManager } from '../../core/solutionManager';
+import { CardComponent } from './card/card.component';
 
 @Component({
     selector: 'app-root',
@@ -8,6 +10,10 @@ import { solutionManager } from '../../core/solutionManager';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+    @ViewChildren(CardComponent)
+    cards: QueryList<CardComponent>;
+    activeSolutionInfo: SolutionInfo;
+
     title = 'Advent of Code 2020 in Typescript';
     solutionInfos = solutionManager.getSolutions();
     solutionInfosByDay = solutionManager.getSolutionsByDay();
@@ -25,7 +31,20 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void { }
 
-    scrollToAnchor(elementId: string) {
+    async solveAllAsync() {
+        for (let card of this.cards) {
+            this.activeSolutionInfo = card.solutionInfo;
+            const currentDay = card.solutionInfo.day;
+            const scrollToDay = Math.max(1, currentDay - 1);
+            this.scrollToAnchor('day' + scrollToDay);
+            await timeoutAsync(300);
+            await card.solve();
+            await timeoutAsync(700);
+        }
+        this.activeSolutionInfo = null;
+    }
+
+    scrollToAnchor(elementId: string): void {
         this.viewPortScroller.scrollToAnchor(elementId);
     }
 }

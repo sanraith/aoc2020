@@ -19,7 +19,6 @@ export class Day01Component extends VisualizationBaseComponent implements OnInit
 
     ngOnInit(): void {
         this.ctx = this.canvas.nativeElement.getContext('2d');
-        this.animate();
     }
 
     protected getAnimation(): Animation {

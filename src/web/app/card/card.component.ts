@@ -1,6 +1,7 @@
-import { Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, Input, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Stopwatch } from 'ts-stopwatch';
+import { timeoutAsync } from '../../../core/helpers';
 import { SolutionInfo } from '../../../core/solutionInfo';
 import { SolutionError, SolutionResult } from '../../../core/solutionProgress';
 import { InputService } from '../services/input.service';
@@ -57,33 +58,44 @@ export class CardComponent implements OnInit {
     }
 
     async solve(): Promise<void> {
-        this.isBusy = true;
-        this.results = [{}, {}];
-        this.endPartAndStartNextPart();
+        return new Promise<void>((resolve, reject) => {
+            this.isBusy = true;
+            this.results = [{}, {}];
+            this.endPartAndStartNextPart();
 
-        this.solutionSubscription = this.workerService.solveAsync(this.solutionInfo.day, this.input).subscribe({
-            next: state => {
-                const result = this.results[state.part - 1];
-                result.onGoing = true;
-                switch (state.type) {
-                    case 'result':
-                        result.value = state.result;
-                        result.data = state;
-                        break;
-                    case 'error':
-                        result.value = 'error';
-                        break;
-                    case 'progress':
-                        result.percentage = state.progress * 100;
-                        if (result.percentage < 1) { result.percentage = undefined; }
-                        break;
+            this.solutionSubscription = this.workerService.solveAsync(this.solutionInfo.day, this.input).subscribe({
+                next: state => {
+                    const result = this.results[state.part - 1];
+                    result.onGoing = true;
+                    switch (state.type) {
+                        case 'result':
+                            result.value = state.result;
+                            result.data = state;
+                            break;
+                        case 'error':
+                            result.value = 'error';
+                            break;
+                        case 'progress':
+                            result.percentage = state.progress * 100;
+                            if (result.percentage < 1) { result.percentage = undefined; }
+                            break;
+                    }
+                    if (state.type === 'result' || state.type === 'error') {
+                        this.endPartAndStartNextPart(state);
+                    }
+                    this.results = this.results.map(x => x); // force change detection
+                },
+                complete: () => {
+                    const visualizationComponent = this.solveCompleted();
+                    if (visualizationComponent) {
+                        timeoutAsync()
+                            .then(() => visualizationComponent.animate())
+                            .then(() => resolve());
+                    } else {
+                        resolve();
+                    }
                 }
-                if (state.type === 'result' || state.type === 'error') {
-                    this.endPartAndStartNextPart(state);
-                }
-                this.results = this.results.map(x => x); // force change detection
-            },
-            complete: () => this.solveCompleted()
+            });
         });
     }
 
@@ -95,25 +107,29 @@ export class CardComponent implements OnInit {
         this.solveCompleted();
     }
 
-    private solveCompleted(): void {
+    private solveCompleted(): VisualizationBaseComponent {
         this.isBusy = false;
         this.solutionSubscription = null;
-        this.updateVisualization(v => {
+        const visualizationComponent = this.updateVisualization(v => {
             v.solutionInfo = this.solutionInfo;
             v.results = this.results;
         });
+        return visualizationComponent;
     }
 
-    private updateVisualization(updater: (v: VisualizationBaseComponent) => void) {
+    private updateVisualization(updater: (v: VisualizationBaseComponent) => void): VisualizationBaseComponent {
         const visType = this.visualizationService.visualizers.get(this.solutionInfo.day);
-        if (!visType) { return; }
+        if (!visType) { return undefined; }
 
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(visType);
         const viewContainerRef = this.contentHost.viewContainerRef;
         viewContainerRef.clear();
 
         const componentRef = viewContainerRef.createComponent(componentFactory);
+        const instance = componentRef.instance;
         updater(componentRef.instance);
+
+        return instance;
     }
 
     private endPartAndStartNextPart(state: SolutionResult | SolutionError = undefined): void {

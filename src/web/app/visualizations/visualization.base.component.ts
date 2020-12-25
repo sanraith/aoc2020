@@ -19,8 +19,8 @@ export abstract class VisualizationBaseComponent {
 
     constructor() { }
 
-    async animate() {
+    async animate(): Promise<void> {
         const animation = this.getAnimation();
-        animation.start();
+        return animation.startAsync();
     }
 }

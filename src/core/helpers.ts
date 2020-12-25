@@ -13,6 +13,11 @@ function regexGetAllResults(regex: RegExp, text: string) {
     return results;
 }
 
+function timeoutAsync(timeMs: number = undefined): Promise<void> {
+    return new Promise<void>((resolve) => setTimeout(() => resolve(), timeMs));
+}
+
 export {
+    timeoutAsync,
     regexGetAllResults
 };
