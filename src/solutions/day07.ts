@@ -3,15 +3,17 @@ import SolutionBase from '../core/solutionBase';
 import { solutionInfo } from '../core/solutionInfo';
 
 export type Bag = {
-    type: string,
-    parents: Bag[],
-    children: { bag: Bag, count: number }[]
-}
+    type: string;
+    parents: Bag[];
+    children: { bag: Bag, count: number; }[];
+    flatParents?: string[];
+    flatChildren?: { bagType: string, count: number; }[];
+};
 
 export type Day07Data = {
-    bags: Map<string, Bag>,
-    myBag: Bag
-}
+    bags: Map<string, Bag>;
+    myBag: Bag;
+};
 
 @solutionInfo({
     day: 7,
@@ -23,7 +25,7 @@ export class Day07 extends SolutionBase {
         const bags = this.parseBags();
         const myBag = bags.get('shiny gold');
         const parentCount = this.countAllParents(myBag);
-        this.visualizationData = <Day07Data>{ bags, myBag };
+        this.createFlatVisualizationData(bags, myBag);
 
         return parentCount;
     }
@@ -89,5 +91,19 @@ export class Day07 extends SolutionBase {
             bags.set(bag.type, bag);
         }
         return bag;
+    }
+
+    /** Flatten bag structure to avoid circular references during transfer from web worker */
+    private createFlatVisualizationData(bags: Map<string, Bag>, myBag: Bag) {
+        const flatBags = new Map([...bags.values()].map(bag => [bag.type, <Bag>{
+            ...bag, parents: [], children: [],
+            flatParents: bag.parents.map(x => x.type),
+            flatChildren: bag.children.map(x => ({ bagType: x.bag.type, count: x.count }))
+        }]));
+
+        this.visualizationData = <Day07Data>{
+            bags: flatBags,
+            myBag: flatBags.get(myBag.type)
+        };
     }
 }

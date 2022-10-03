@@ -33,6 +33,7 @@ class Day07Animation extends Animation {
     constructor(width, height, ctx, runtimeResults) {
         super(width, height, ctx, runtimeResults);
         this.day07Data = this.runtimeResults.map(x => x.data.visualizationData as Day07Data);
+        this.unflattenVisualizationData();
         this.init();
     }
 
@@ -115,7 +116,7 @@ class Day07Animation extends Animation {
         const boxes: Drawable[] = [];
         const lines: Drawable[] = [];
         const boxLevels: Map<Bag, Drawable>[] = Array(levels.length).fill(0).map(() => new Map());
-        const boxPairs: { source: Drawable, target: Drawable, line?: Drawable }[] = [];
+        const boxPairs: { source: Drawable, target: Drawable, line?: Drawable; }[] = [];
 
         const partMarginY = (this.height - top * 2 - levels.length * partSize) / (levels.length - 1);
         for (let { level, i } of levels.map((level, i) => ({ level, i }))) {
@@ -198,5 +199,19 @@ class Day07Animation extends Animation {
         }
 
         return levels;
+    }
+
+    /** Populate circular dependent children from flat data */
+    private unflattenVisualizationData() {
+        const bags = this.day07Data[0].bags;
+        for (const bag of bags.values()) {
+            bag.parents = bag.flatParents.map(x => bags.get(x));
+            bag.children = bag.flatChildren.map(x => ({
+                bag: bags.get(x.bagType),
+                count: x.count
+            }));
+            bag.flatParents = undefined;
+            bag.flatChildren = undefined;
+        }
     }
 }

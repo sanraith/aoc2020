@@ -15,17 +15,18 @@
         "docs/**"
     ],
     "cSpell.words": [
-        "Coord",
-        "Drawables",
-        "Scroller",
         "adjacents",
         "argparse",
+        "Coord",
+        "Drawables",
         "metavar",
         "nargs",
         "preconnect",
         "sanraith",
+        "Scroller",
         "ttsc",
         "ttypescript",
+        "unflatten",
         "unselectable",
         "unsub",
         "xdescribe"
